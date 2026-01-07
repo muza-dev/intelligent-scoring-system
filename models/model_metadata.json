@@ -1,0 +1,70 @@
+{
+  "model_name": "LogisticRegression",
+  "training_date": "2026-01-07T22:15:16.634482",
+  "dataset_shape": {
+    "train_samples": 491,
+    "test_samples": 123,
+    "n_features": 11
+  },
+  "feature_columns": [
+    "ApplicantIncome",
+    "CoapplicantIncome",
+    "LoanAmount",
+    "Loan_Amount_Term",
+    "Credit_History",
+    "Gender",
+    "Married",
+    "Dependents",
+    "Education",
+    "Self_Employed",
+    "Property_Area"
+  ],
+  "feature_names_transformed": [
+    "numeric__ApplicantIncome",
+    "numeric__CoapplicantIncome",
+    "numeric__LoanAmount",
+    "numeric__Loan_Amount_Term",
+    "numeric__Credit_History",
+    "categorical__Gender_Female",
+    "categorical__Gender_Male",
+    "categorical__Married_No",
+    "categorical__Married_Yes",
+    "categorical__Dependents_0",
+    "categorical__Dependents_1",
+    "categorical__Dependents_2",
+    "categorical__Dependents_3+",
+    "categorical__Education_Graduate",
+    "categorical__Education_Not Graduate",
+    "categorical__Self_Employed_No",
+    "categorical__Self_Employed_Yes",
+    "categorical__Property_Area_Rural",
+    "categorical__Property_Area_Semiurban",
+    "categorical__Property_Area_Urban"
+  ],
+  "cv_results": {
+    "LogisticRegression": {
+      "mean_accuracy": 0.7983714698000413,
+      "std_accuracy": 0.016295788434948617,
+      "cv_scores": [
+        0.797979797979798,
+        0.8163265306122449,
+        0.8163265306122449,
+        0.7857142857142857,
+        0.7755102040816326
+      ]
+    },
+    "RandomForest": {
+      "mean_accuracy": 0.7963306534735106,
+      "std_accuracy": 0.00916398084749923,
+      "cv_scores": [
+        0.797979797979798,
+        0.8061224489795918,
+        0.8061224489795918,
+        0.7857142857142857,
+        0.7857142857142857
+      ]
+    }
+  },
+  "test_accuracy": 0.8617886178861789,
+  "random_state": 42
+}
