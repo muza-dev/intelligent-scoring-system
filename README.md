@@ -34,6 +34,7 @@ flowchart TB
 
 ### 1. Setup Environment
 
+#### Windows (PowerShell)
 ```powershell
 # Navigate to project directory
 cd d:\projects\muza_projects\pbl4
@@ -44,8 +45,23 @@ pip install uv
 # Install dependencies (creates .venv automatically)
 uv sync
 
-# Activate virtual environment (Windows PowerShell)
+# Activate virtual environment
 .\.venv\Scripts\Activate.ps1
+```
+
+#### macOS / Linux (Terminal)
+```bash
+# Navigate to project directory
+cd ~/projects/pbl4
+
+# Install UV if not already installed
+pip install uv
+
+# Install dependencies (creates .venv automatically)
+uv sync
+
+# Activate virtual environment
+source .venv/bin/activate
 ```
 
 ### 2. Download Dataset
@@ -56,19 +72,19 @@ uv sync
 
 ### 3. Train the Model
 
-```powershell
+```bash
 python -m src.train
 ```
 
 ### 4. Run Evaluation (Optional)
 
-```powershell
+```bash
 python -m src.evaluate
 ```
 
 ### 5. Launch Streamlit App
 
-```powershell
+```bash
 streamlit run main.py
 ```
 
