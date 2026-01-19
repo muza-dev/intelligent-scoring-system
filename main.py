@@ -18,6 +18,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+import base64
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -27,6 +28,7 @@ from src import config
 from src.utils import setup_logging, model_exists, load_metadata
 from src.predict import load_model, predict_single, predict_batch
 from src.explain import get_aggregated_feature_importance, plot_feature_importance
+from src.eda import render_eda_page
 from src.i18n import LANGUAGES, DEFAULT_LANGUAGE, t
 
 logger = setup_logging("streamlit_app")
@@ -40,6 +42,38 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+def get_base64_of_bin_file(bin_file):
+    """
+    Reads a binary file and returns its base64 encoded string.
+    """
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def set_sidebar_background(png_file):
+    """
+    Sets the sidebar background image using CSS.
+    """
+    bin_str = get_base64_of_bin_file(png_file)
+    page_bg_img = f'''
+    <style>
+    [data-testid="stSidebar"] > div:first-child {{
+        background-image: url("data:image/png;base64,{bin_str}");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    '''
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# Set sidebar background
+try:
+    set_sidebar_background(PROJECT_ROOT / "assets/sidebar_bg.png")
+except Exception:
+    pass  # Fail silently if image not found
 
 # =============================================================================
 # Language State
@@ -106,7 +140,7 @@ def render_sidebar():
     
     page = st.sidebar.radio(
         "Navigation",
-        [t("nav_train", lang), t("nav_single", lang), t("nav_batch", lang), t("nav_about", lang)],
+        [t("nav_train", lang), t("nav_eda", lang), t("nav_single", lang), t("nav_batch", lang), t("nav_about", lang)],
         index=0,
         label_visibility="collapsed"
     )
@@ -248,7 +282,7 @@ def render_train_page():
 # =============================================================================
 def render_prediction_page():
     """Render the single prediction page."""
-    lang = get_lang()
+    lang = get_lang()   
     
     st.title(t("prediction_title", lang))
     
@@ -576,17 +610,6 @@ def render_about_page():
     
     ---
     
-    ### {t("ethics_title", lang)}
-    
-    > **{t("ethics_warning", lang)}**
-    
-    - **{t("ethics_fairness", lang)}**
-    - **{t("ethics_transparency", lang)}**
-    - **{t("ethics_regulation", lang)}**
-    - **{t("ethics_oversight", lang)}**
-    
-    ---
-    
     *{t("coursework_note", lang)}*
     """)
     
@@ -601,14 +624,19 @@ def render_about_page():
             
             with col1:
                 st.json({
-                    "model_name": metadata.get("model_name"),
-                    "training_date": metadata.get("training_date"),
-                    "test_accuracy": metadata.get("test_accuracy"),
-                    "random_state": metadata.get("random_state"),
+                    t("meta_model_name", lang): metadata.get("model_name"),
+                    t("meta_training_date", lang): metadata.get("training_date"),
+                    t("meta_test_accuracy", lang): metadata.get("test_accuracy"),
+                    t("meta_random_state", lang): metadata.get("random_state"),
                 })
             
             with col2:
-                st.json(metadata.get("dataset_shape", {}))
+                shape = metadata.get("dataset_shape", {})
+                st.json({
+                    t("meta_train_samples", lang): shape.get("train_samples"),
+                    t("meta_test_samples", lang): shape.get("test_samples"),
+                    t("meta_n_features", lang): shape.get("n_features"),
+                })
 
 
 # =============================================================================
@@ -621,6 +649,8 @@ def main():
     
     if page == t("nav_train", lang):
         render_train_page()
+    elif page == t("nav_eda", lang):
+        render_eda_page()
     elif page == t("nav_single", lang):
         render_prediction_page()
     elif page == t("nav_batch", lang):
