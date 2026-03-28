@@ -805,9 +805,253 @@ TRANSLATIONS = {
         "RU": "Количество Признаков",
         "EN": "Number of Features",
     },
+    
+    # ==========================================================================
+    # Authentication Page
+    # ==========================================================================
+    "auth_login": {
+        "UZ": "Tizimga kirish",
+        "RU": "Войти",
+        "EN": "Sign in",
+    },
+    "auth_email": {
+        "UZ": "Email",
+        "RU": "Email",
+        "EN": "Email",
+    },
+    "auth_username": {
+        "UZ": "Foydalanuvchi nomi",
+        "RU": "Имя пользователя",
+        "EN": "Username",
+    },
+    "auth_password": {
+        "UZ": "Parol",
+        "RU": "Пароль",
+        "EN": "Password",
+    },
+    "auth_remember": {
+        "UZ": "Eslab qolish",
+        "RU": "Запомнить меня",
+        "EN": "Remember me",
+    },
+    "auth_forgot": {
+        "UZ": "Parolni unutdingizmi?",
+        "RU": "Забыли пароль?",
+        "EN": "Forgot password?",
+    },
+    "auth_login_btn": {
+        "UZ": "Kirish",
+        "RU": "Войти",
+        "EN": "Login",
+    },
+    "auth_not_registered": {
+        "UZ": "Ro'yxatdan o'tmaganmisiz?",
+        "RU": "Нет аккаунта?",
+        "EN": "Not registred?",
+    },
+    "auth_create_account": {
+        "UZ": "Hisob yarating!",
+        "RU": "Создать аккаунт!",
+        "EN": "Create an account!",
+    },
+    "auth_error": {
+        "UZ": "Iltimos foydalanuvchi nomi va parolni kiriting",
+        "RU": "Пожалуйста, введите имя пользователя и пароль",
+        "EN": "Please enter both username and password",
+    },
+    "auth_invalid_credentials": {
+        "UZ": "Foydalanuvchi nomi yoki parol noto'g'ri.",
+        "RU": "Неверное имя пользователя или пароль.",
+        "EN": "Invalid username or password.",
+    },
+    "logout": {
+        "UZ": "Chiqish",
+        "RU": "Выход",
+        "EN": "Logout",
+    },
+    "auth_register_btn": {
+        "UZ": "Ro'yxatdan o'tish",
+        "RU": "Регистрация",
+        "EN": "Register",
+    },
+    "auth_admin_login_btn": {
+        "UZ": "Admin Kirish",
+        "RU": "Вход для Админа",
+        "EN": "Admin Login",
+    },
+    "auth_login_as_admin_btn": {
+        "UZ": "Admin sifatida kirish",
+        "RU": "Войти как Администратор",
+        "EN": "Log in as Admin",
+    },
+    "auth_back_to_staff": {
+        "UZ": "← Xodimlar kirishiga qaytish",
+        "RU": "← Назад к входу для сотрудников",
+        "EN": "← Back to Staff Login",
+    },
+
+    # ==========================================================================
+    # User Management Page (Admin only)
+    # ==========================================================================
+    "nav_user_mgmt": {
+        "UZ": "Foydalanuvchilar",
+        "RU": "Пользователи",
+        "EN": "User Management",
+    },
+    "user_mgmt_title": {
+        "UZ": "👥 Bank Xodimlarini Boshqarish",
+        "RU": "👥 Управление Сотрудниками",
+        "EN": "👥 Bank Staff Management",
+    },
+    "staff_list": {
+        "UZ": "Xodimlar Ro'yxati",
+        "RU": "Список Сотрудников",
+        "EN": "Staff List",
+    },
+    "add_staff": {
+        "UZ": "Yangi Xodim Qo'shish",
+        "RU": "Добавить Сотрудника",
+        "EN": "Add New Staff",
+    },
+    "add_staff_btn": {
+        "UZ": "Xodim Qo'shish",
+        "RU": "Добавить",
+        "EN": "Add Staff",
+    },
+    "delete_staff": {
+        "UZ": "O'chirish",
+        "RU": "Удалить",
+        "EN": "Delete",
+    },
+    "role_admin": {
+        "UZ": "Administrator",
+        "RU": "Администратор",
+        "EN": "Admin",
+    },
+    "role_staff": {
+        "UZ": "Bank Xodimi",
+        "RU": "Сотрудник Банка",
+        "EN": "Bank Staff",
+    },
+    "staff_deleted": {
+        "UZ": "✓ Xodim muvaffaqiyatli o'chirildi.",
+        "RU": "✓ Сотрудник успешно удалён.",
+        "EN": "✓ Staff member deleted successfully.",
+    },
+    "staff_added": {
+        "UZ": "✓ Yangi xodim muvaffaqiyatli qo'shildi.",
+        "RU": "✓ Новый сотрудник успешно добавлен.",
+        "EN": "✓ New staff member added successfully.",
+    },
+    "staff_username_taken": {
+        "UZ": "Bu foydalanuvchi nomi allaqachon band.",
+        "RU": "Это имя пользователя уже занято.",
+        "EN": "That username is already taken.",
+    },
+    "no_staff": {
+        "UZ": "Hozircha hech qanday xodim yo'q.",
+        "RU": "Пока нет ни одного сотрудника.",
+        "EN": "No staff members yet.",
+    },
+    "confirm_delete": {
+        "UZ": "Haqiqatan ham o'chirmoqchimisiz?",
+        "RU": "Вы уверены, что хотите удалить?",
+        "EN": "Are you sure you want to delete?",
+    },
+    "full_name": {
+        "UZ": "To'liq Ism",
+        "RU": "Полное Имя",
+        "EN": "Full Name",
+    },
+    "created_at": {
+        "UZ": "Ro'yxatdan o'tgan sana",
+        "RU": "Дата регистрации",
+        "EN": "Registered On",
+    },
+    "actions": {
+        "UZ": "Harakatlar",
+        "RU": "Действия",
+        "EN": "Actions",
+    },
+
+    # ==========================================================================
+    # Forgot / Reset Password
+    # ==========================================================================
+    "forgot_title": {
+        "UZ": "🔑 Parolni Tiklash",
+        "RU": "🔑 Восстановление Пароля",
+        "EN": "🔑 Reset Password",
+    },
+    "forgot_username_label": {
+        "UZ": "Foydalanuvchi nomingiz",
+        "RU": "Ваше имя пользователя",
+        "EN": "Your Username",
+    },
+    "forgot_new_password": {
+        "UZ": "Yangi parol",
+        "RU": "Новый пароль",
+        "EN": "New Password",
+    },
+    "forgot_confirm_password": {
+        "UZ": "Parolni tasdiqlang",
+        "RU": "Подтвердите пароль",
+        "EN": "Confirm New Password",
+    },
+    "forgot_reset_btn": {
+        "UZ": "Parolni Yangilash",
+        "RU": "Обновить Пароль",
+        "EN": "Update Password",
+    },
+    "forgot_success": {
+        "UZ": "✓ Parol muvaffaqiyatli yangilandi! Iltimos, kiring.",
+        "RU": "✓ Пароль успешно обновлён! Пожалуйста, войдите.",
+        "EN": "✓ Password updated successfully! Please log in.",
+    },
+    "forgot_user_not_found": {
+        "UZ": "Bu foydalanuvchi nomi topilmadi.",
+        "RU": "Пользователь с таким именем не найден.",
+        "EN": "No account found with that username.",
+    },
+    "forgot_passwords_mismatch": {
+        "UZ": "Parollar mos kelmaydi.",
+        "RU": "Пароли не совпадают.",
+        "EN": "Passwords do not match.",
+    },
+    "auth_contact_admin": {
+        "UZ": "Agar parolingizni unutgan bo'lsangiz, uni tiklash uchun tizim administratoriga murojaat qiling.",
+        "RU": "Если вы забыли свой пароль, пожалуйста, обратитесь к системному администратору для его сброса.",
+        "EN": "If you forgot your password, please contact the System Administrator to reset it.",
+    },
+    "back_to_login": {
+        "UZ": "← Kirishga qaytish",
+        "RU": "← Назад к входу",
+        "EN": "← Back to Login",
+    },
+    
+    # ==========================================================================
+    # Themes
+    # ==========================================================================
+    "theme": {
+        "UZ": "Mavzu",
+        "RU": "Тема",
+        "EN": "Theme",
+    },
+    "theme_system": {
+        "UZ": "Tizim standart",
+        "RU": "Системная",
+        "EN": "System default",
+    },
+    "theme_dark": {
+        "UZ": "To'q mavzu",
+        "RU": "Темная тема",
+        "EN": "Dark mode",
+    },
+    "theme_light": {
+        "UZ": "Oq mavzu",
+        "RU": "Светлая тема",
+        "EN": "White mode",
+    },
 }
-
-
 def get_text(key: str, lang: str = DEFAULT_LANGUAGE) -> str:
     """
     Get translated text for a given key.

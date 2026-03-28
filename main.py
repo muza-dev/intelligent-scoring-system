@@ -30,6 +30,7 @@ from src.predict import load_model, predict_single, predict_batch
 from src.explain import get_aggregated_feature_importance, plot_feature_importance
 from src.eda import render_eda_page
 from src.i18n import LANGUAGES, DEFAULT_LANGUAGE, t
+from src.auth import check_password, render_login_page, logout, get_role
 
 logger = setup_logging("streamlit_app")
 
@@ -117,12 +118,13 @@ def clear_model_cache():
 # Sidebar Navigation
 # =============================================================================
 def render_sidebar():
-    """Render the sidebar navigation."""
+    """Render the sidebar navigation (role-aware)."""
     lang = get_lang()
-    
+    role = get_role()
+
     st.sidebar.title(t("app_title", lang))
     st.sidebar.markdown("---")
-    
+
     # Language switcher
     selected_lang = st.sidebar.selectbox(
         t("language", lang),
@@ -131,33 +133,65 @@ def render_sidebar():
         index=list(LANGUAGES.keys()).index(lang),
         key="language_selector"
     )
-    
+
     if selected_lang != lang:
         st.session_state.lang = selected_lang
         st.rerun()
-    
+
     st.sidebar.markdown("---")
-    
+
+    # Role badge
+    if role == "admin":
+        st.sidebar.markdown(
+            '<span style="background:#6c3483;color:white;padding:3px 10px;'
+            'border-radius:12px;font-size:12px;font-weight:700;">🔐 Admin</span>',
+            unsafe_allow_html=True
+        )
+        nav_options = [
+            t("nav_train", lang),
+            t("nav_eda", lang),
+            t("nav_single", lang),
+            t("nav_batch", lang),
+            t("nav_user_mgmt", lang),
+            t("nav_about", lang),
+        ]
+    else:
+        st.sidebar.markdown(
+            '<span style="background:#1a5276;color:white;padding:3px 10px;'
+            'border-radius:12px;font-size:12px;font-weight:700;">🏦 Bank Staff</span>',
+            unsafe_allow_html=True
+        )
+        nav_options = [
+            t("nav_single", lang),
+            t("nav_batch", lang),
+            t("nav_about", lang),
+        ]
+
+    st.sidebar.markdown("")
     page = st.sidebar.radio(
         "Navigation",
-        [t("nav_train", lang), t("nav_eda", lang), t("nav_single", lang), t("nav_batch", lang), t("nav_about", lang)],
+        nav_options,
         index=0,
         label_visibility="collapsed"
     )
-    
+
     st.sidebar.markdown("---")
-    
-    # Model status
-    if model_exists():
-        st.sidebar.success(t("model_trained", lang))
-        metadata = get_cached_metadata()
-        if metadata:
-            st.sidebar.caption(f"{t('model', lang)}: {metadata.get('model_name', 'Unknown')}")
-            st.sidebar.caption(f"{t('accuracy', lang)}: {metadata.get('test_accuracy', 0):.2%}")
-    else:
-        st.sidebar.warning(t("no_model", lang))
-        st.sidebar.caption(t("go_to_training", lang))
-    
+
+    # Model status (relevant for admin)
+    if role == "admin":
+        if model_exists():
+            st.sidebar.success(t("model_trained", lang))
+            metadata = get_cached_metadata()
+            if metadata:
+                st.sidebar.caption(f"{t('model', lang)}: {metadata.get('model_name', 'Unknown')}")
+                st.sidebar.caption(f"{t('accuracy', lang)}: {metadata.get('test_accuracy', 0):.2%}")
+        else:
+            st.sidebar.warning(t("no_model", lang))
+        st.sidebar.markdown("---")
+
+    if st.sidebar.button(t("logout", lang), use_container_width=True):
+        logout()
+
     return page
 
 
@@ -640,23 +674,123 @@ def render_about_page():
 
 
 # =============================================================================
+# Page: User Management (Admin only)
+# =============================================================================
+def render_user_management_page():
+    """Admin-only page to manage bank staff accounts."""
+    from src.db import get_all_staff, add_user, delete_user
+    from src.security import hash_password
+
+    lang = get_lang()
+
+    st.title(t("user_mgmt_title", lang))
+    st.markdown("---")
+
+    # --- Staff list ---
+    st.subheader(t("staff_list", lang))
+    staff_rows = get_all_staff()
+
+    if not staff_rows:
+        st.info(t("no_staff", lang))
+    else:
+        for row in staff_rows:
+            col_name, col_user, col_email, col_phone, col_date, col_del = st.columns(
+                [2, 1.5, 2, 1.5, 1.5, 0.8]
+            )
+            col_name.write(f"**{row['full_name']}**")
+            col_user.write(f"`{row['username']}`")
+            col_email.write(row['email'])
+            col_phone.write(row['phone_number'])
+            col_date.write(str(row['created_at'])[:10])
+            if col_del.button(
+                t("delete_staff", lang),
+                key=f"del_{row['username']}",
+                type="secondary",
+                use_container_width=True,
+            ):
+                if delete_user(row['username']):
+                    st.success(t("staff_deleted", lang))
+                    st.rerun()
+
+    st.markdown("---")
+
+    # --- Add Staff form ---
+    st.subheader(t("add_staff", lang))
+    with st.form("add_staff_form", clear_on_submit=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            new_full_name    = st.text_input(t("full_name", lang))
+            new_phone        = st.text_input("Phone Number")
+            new_email        = st.text_input("Email")
+            new_national_id  = st.text_input("National ID / Passport No")
+        with col2:
+            new_address      = st.text_input("Address")
+            new_income       = st.text_input("Monthly Income")
+            new_uname        = st.text_input("Username")
+
+        new_pass  = st.text_input("Password",         type="password")
+        new_pass2 = st.text_input("Confirm Password", type="password")
+
+        submitted = st.form_submit_button(t("add_staff_btn", lang), type="primary", use_container_width=True)
+
+        if submitted:
+            required = [new_full_name, new_phone, new_email, new_national_id,
+                        new_address, new_income, new_uname, new_pass, new_pass2]
+            if not all(required):
+                st.error("Please fill in all fields.")
+            elif new_pass != new_pass2:
+                st.error("Passwords do not match.")
+            else:
+                hashed = hash_password(new_pass)
+                ok = add_user(
+                    new_uname, hashed, new_pass,
+                    new_full_name, new_phone, new_email,
+                    new_national_id, new_address, new_income,
+                    role="staff"
+                )
+                if ok:
+                    st.success(t("staff_added", lang))
+                    st.rerun()
+                else:
+                    st.error(t("staff_username_taken", lang))
+
+
+# =============================================================================
 # Main Application
 # =============================================================================
 def main():
     """Main application entry point."""
+    if not check_password():
+        render_login_page()
+        return
+
     page = render_sidebar()
     lang = get_lang()
-    
-    if page == t("nav_train", lang):
-        render_train_page()
-    elif page == t("nav_eda", lang):
-        render_eda_page()
-    elif page == t("nav_single", lang):
-        render_prediction_page()
-    elif page == t("nav_batch", lang):
-        render_batch_page()
-    elif page == t("nav_about", lang):
-        render_about_page()
+    role = get_role()
+
+    # ---- Admin pages (all pages) ----
+    if role == "admin":
+        if page == t("nav_train", lang):
+            render_train_page()
+        elif page == t("nav_eda", lang):
+            render_eda_page()
+        elif page == t("nav_single", lang):
+            render_prediction_page()
+        elif page == t("nav_batch", lang):
+            render_batch_page()
+        elif page == t("nav_user_mgmt", lang):
+            render_user_management_page()
+        elif page == t("nav_about", lang):
+            render_about_page()
+
+    # ---- Bank Staff pages ----
+    else:
+        if page == t("nav_single", lang):
+            render_prediction_page()
+        elif page == t("nav_batch", lang):
+            render_batch_page()
+        elif page == t("nav_about", lang):
+            render_about_page()
 
 
 if __name__ == "__main__":
