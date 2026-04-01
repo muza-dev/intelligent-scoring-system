@@ -18,9 +18,14 @@ TRANSLATIONS = {
     # Navigation & Common
     # ==========================================================================
     "app_title": {
-        "UZ": "🏦 Kredit Tasdiqlash",
-        "RU": "🏦 Одобрение Кредита",
-        "EN": "🏦 Loan Approval",
+        "UZ": "🏦 Intellektual skoring",
+        "RU": "🏦 Интеллектуальный скоринг",
+        "EN": "🏦 Intelligent Scoring",
+    },
+    "nav_welcome": {
+        "UZ": "Xush Kelibsiz",
+        "RU": "Добро Пожаловать",
+        "EN": "Welcome",
     },
     "nav_train": {
         "UZ": "O'qitish va Metrikalar",
@@ -52,6 +57,26 @@ TRANSLATIONS = {
         "RU": "Язык",
         "EN": "Language",
     },
+    "theme": {
+        "UZ": "Mavzu",
+        "RU": "Тема",
+        "EN": "Theme",
+    },
+    "theme_system": {
+        "UZ": "Tizim standart",
+        "RU": "Системная тема",
+        "EN": "System Default",
+    },
+    "theme_dark": {
+        "UZ": "Tungi rejim",
+        "RU": "Темная тема",
+        "EN": "Dark Mode",
+    },
+    "theme_light": {
+        "UZ": "Kunduzgi rejim",
+        "RU": "Светлая тема",
+        "EN": "Light Mode",
+    },
     "model_trained": {
         "UZ": "✓ Model o'qitilgan",
         "RU": "✓ Модель обучена",
@@ -76,6 +101,70 @@ TRANSLATIONS = {
         "UZ": "Aniqlik",
         "RU": "Точность",
         "EN": "Accuracy",
+    },
+    
+    # ==========================================================================
+    # Welcome Page
+    # ==========================================================================
+    "welcome_header": {
+        "UZ": "Iste'mol kreditlari uchun intellektual skoring platformasiga xush kelibsiz, {name}!",
+        "RU": "Добро пожаловать на платформу интеллектуального скоринга для потребительских кредитов, {name}!",
+        "EN": "Welcome to the platform for intelligent scoring of consumer loans, {name}!",
+    },
+    "welcome_subtitle": {
+        "UZ": "Iste'mol kreditlari uchun intellektual skoring platformasiga xush kelibsiz.",
+        "RU": "Добро пожаловать на платформу интеллектуального скоринга для потребительских кредитов.",
+        "EN": "Welcome to the platform for intelligent scoring of consumer loans.",
+    },
+    "welcome_instructions": {
+        "UZ": "Siz ushbu tizim orqali mijozlaringiz uchun kredit arizalarini tahlil qilishingiz va natijalar olishingiz mumkin.",
+        "RU": "С помощью этой системы вы можете анализировать кредитные заявки и получать результаты для ваших клиентов.",
+        "EN": "With this system, you can analyze loan applications and get results for your clients.",
+    },
+    "welcome_step_1": {
+        "UZ": "1. Chap tarafdagi menyu orqali 'Yakka Bashorat' yoki 'Ommaviy Bashorat' bo'limini tanlang.",
+        "RU": "1. Выберите в меню слева раздел 'Единичный Прогноз' или 'Пакетный Прогноз'.",
+        "EN": "1. Select 'Single Prediction' or 'Batch Prediction' from the menu on the left.",
+    },
+    "welcome_step_2": {
+        "UZ": "2. Mijoz ma'lumotlarini kiriting yoki CSV faylni yuklang.",
+        "RU": "2. Введите данные клиента или загрузите CSV-файл.",
+        "EN": "2. Enter client information or upload a CSV file.",
+    },
+    "welcome_step_3": {
+        "UZ": "3. 'Bashorat' tugmasini bosing va natijalarni ko'ring.",
+        "RU": "3. Нажмите кнопку 'Прогноз' и посмотрите результаты.",
+        "EN": "3. Press the 'Predict' button and view the results.",
+    },
+    "welcome_contact_admin": {
+        "UZ": "Agar sizda biror savol yoki muammo bo'lsa, iltimos, Administratorga murojaat qiling.",
+        "RU": "Если у вас возникли вопросы или проблемы, пожалуйста, обратитесь к администратору.",
+        "EN": "If you have any questions or issues, please contact the Administrator.",
+    },
+    "admin_dashboard_caption": {
+        "UZ": "🏦 Iste'mol kreditlari uchun intellektual skoring tizimi | Admin Dashboard",
+        "RU": "🏦 Интеллектуальная система скоринга для потребительских кредитов | Панель Администратора",
+        "EN": "🏦 Intelligent Scoring System for Consumer Loans | Admin Dashboard",
+    },
+    "welcome_admin_intro": {
+        "UZ": "Admin sifatida sizda modelni boshqarish va tizim sozlamalariga kirish huquqi bor.",
+        "RU": "Как администратор, вы имеете доступ к управлению моделями и системным настройкам.",
+        "EN": "As an Administrator, you have access to model management and system settings.",
+    },
+    "train_desc_short": {
+        "UZ": "Yangi modelni o'qiting va uning samaradorligini baholang.",
+        "RU": "Обучите новую модель и оцените её эффективность.",
+        "EN": "Train a new model and evaluate its performance metrics.",
+    },
+    "eda_desc_short": {
+        "UZ": "Ma'lumotlar to'plamini vizual tahlil qiling.",
+        "RU": "Визуализируйте и анализируйте наборы данных.",
+        "EN": "Visualize and analyze the dataset distributions and correlations.",
+    },
+    "user_mgmt_desc_short": {
+        "UZ": "Tizim foydalanuvchilarini boshqarish.",
+        "RU": "Управление пользователями системы.",
+        "EN": "Manage system users and their roles.",
     },
     
     # ==========================================================================
@@ -603,9 +692,9 @@ TRANSLATIONS = {
         "EN": "ℹ️ About",
     },
     "about_description": {
-        "UZ": "Bu ilova ariza beruvchi xususiyatlariga asoslanib kredit arizasi tasdiqlanishini bashorat qilish uchun mashinaviy o'rganishdan foydalanadi.",
-        "RU": "Это приложение использует машинное обучение для прогнозирования одобрения кредитной заявки на основе характеристик заявителя.",
-        "EN": "This application uses machine learning to predict whether a loan application will be approved based on applicant characteristics.",
+        "UZ": "Ushbu ilova iste'mol kreditlari uchun intellektual skoring orqali ariza beruvchi xususiyatlariga asoslanib kredit arizasini baholash uchun mashinaviy o'rganishdan foydalanadi.",
+        "RU": "Это приложение использует машинное обучение для оценки кредитных заявок на основе характеристик заявителя путем создания интеллектуальной модели скоринга для потребительских кредитов.",
+        "EN": "This application uses machine learning to evaluate loan applications based on applicant characteristics by developing an intelligent scoring model for consumer loans.",
     },
     "dataset_title": {
         "UZ": "Ma'lumotlar To'plami",

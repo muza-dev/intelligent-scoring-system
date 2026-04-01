@@ -25,7 +25,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src import config
-from src.utils import setup_logging, model_exists, load_metadata
+from src.utils import setup_logging, model_exists, load_metadata, inject_theme_css
 from src.predict import load_model, predict_single, predict_batch
 from src.explain import get_aggregated_feature_importance, plot_feature_importance
 from src.eda import render_eda_page
@@ -115,6 +115,76 @@ def clear_model_cache():
 
 
 # =============================================================================
+# Welcome Page
+# =============================================================================
+def render_welcome_page():
+    """Render a welcoming landing page with instructions."""
+    lang = get_lang()
+    role = get_role()
+    display_name = st.session_state.get("full_name", "User").title()
+    
+    st.title("👋 " + t("nav_welcome", lang))
+    
+    st.markdown(f"### {t('welcome_header', lang).format(name=display_name)}")
+    
+    st.markdown("---")
+    
+    # Feature highlights in sidebar order
+    if role == "admin":
+        st.markdown(f"_{t('welcome_admin_intro', lang)}_")
+        
+        # 1. Train & Metrics
+        with st.container():
+            st.subheader("📊 1. " + t("nav_train", lang))
+            st.write(t("train_desc_short", lang))
+            
+        # 2. EDA
+        with st.container():
+            st.subheader("📈 2. " + t("nav_eda", lang))
+            st.write(t("eda_desc_short", lang))
+            
+        # 3. Single Prediction
+        with st.container():
+            st.subheader("🔮 3. " + t("nav_single", lang))
+            st.write(t("enter_details", lang))
+            
+        # 4. Batch Prediction
+        with st.container():
+            st.subheader("📁 4. " + t("nav_batch", lang))
+            st.write(t("batch_description", lang))
+            
+        # 5. User Management
+        with st.container():
+            st.subheader("👥 5. " + t("nav_user_mgmt", lang))
+            st.write(t("user_mgmt_desc_short", lang))
+            
+        # 6. About
+        with st.container():
+            st.subheader("ℹ️ 6. " + t("nav_about", lang))
+            st.write(t("about_description", lang))
+
+    else:
+        # Bank Staff view (Prediction focused)
+        st.markdown(f"#### {t('welcome_instructions', lang)}")
+        
+        # 1. Single Prediction
+        with st.container():
+            st.subheader("🔮 1. " + t("nav_single", lang))
+            st.write(t("enter_details", lang))
+            
+        # 2. Batch Prediction
+        with st.container():
+            st.subheader("📁 2. " + t("nav_batch", lang))
+            st.write(t("batch_description", lang))
+    
+    st.markdown("---")
+    if role == "admin":
+        st.caption(t("admin_dashboard_caption", lang))
+    else:
+        st.caption(t("welcome_contact_admin", lang))
+
+
+# =============================================================================
 # Sidebar Navigation
 # =============================================================================
 def render_sidebar():
@@ -123,19 +193,42 @@ def render_sidebar():
     role = get_role()
 
     st.sidebar.title(t("app_title", lang))
-    st.sidebar.markdown("---")
-
-    # Language switcher
-    selected_lang = st.sidebar.selectbox(
-        t("language", lang),
-        options=list(LANGUAGES.keys()),
-        format_func=lambda x: LANGUAGES[x],
-        index=list(LANGUAGES.keys()).index(lang),
-        key="language_selector"
-    )
+    
+    # Selectors row
+    col1, col2 = st.sidebar.columns([1, 1], gap="small")
+    
+    with col1:
+        selected_lang = st.selectbox(
+            t("language", lang),
+            options=list(LANGUAGES.keys()),
+            format_func=lambda x: LANGUAGES[x],
+            index=list(LANGUAGES.keys()).index(lang),
+            key="language_selector",
+            label_visibility="collapsed" if role == "staff" else "visible"
+        )
+        
+    with col2:
+        theme_options = {
+            "theme_system": "💻",
+            "theme_dark": "🌙",
+            "theme_light": "☀️"
+        }
+        current_theme = st.session_state.get("theme", "theme_system")
+        selected_theme = st.selectbox(
+            t("theme", lang),
+            options=list(theme_options.keys()),
+            format_func=lambda x: f"{theme_options[x]} {t(x, lang).split()[-1]}", # Shorter text
+            index=list(theme_options.keys()).index(current_theme),
+            key="dashboard_theme_selector",
+            label_visibility="collapsed" if role == "staff" else "visible"
+        )
 
     if selected_lang != lang:
         st.session_state.lang = selected_lang
+        st.rerun()
+        
+    if selected_theme != current_theme:
+        st.session_state.theme = selected_theme
         st.rerun()
 
     st.sidebar.markdown("---")
@@ -148,6 +241,7 @@ def render_sidebar():
             unsafe_allow_html=True
         )
         nav_options = [
+            t("nav_welcome", lang),
             t("nav_train", lang),
             t("nav_eda", lang),
             t("nav_single", lang),
@@ -162,9 +256,9 @@ def render_sidebar():
             unsafe_allow_html=True
         )
         nav_options = [
+            t("nav_welcome", lang),
             t("nav_single", lang),
             t("nav_batch", lang),
-            t("nav_about", lang),
         ]
 
     st.sidebar.markdown("")
@@ -760,6 +854,13 @@ def render_user_management_page():
 # =============================================================================
 def main():
     """Main application entry point."""
+    # Ensure theme is initialized
+    if "theme" not in st.session_state:
+        st.session_state.theme = "theme_system"
+        
+    # Inject Theme early
+    inject_theme_css(st.session_state.theme)
+
     if not check_password():
         render_login_page()
         return
@@ -770,7 +871,9 @@ def main():
 
     # ---- Admin pages (all pages) ----
     if role == "admin":
-        if page == t("nav_train", lang):
+        if page == t("nav_welcome", lang):
+            render_welcome_page()
+        elif page == t("nav_train", lang):
             render_train_page()
         elif page == t("nav_eda", lang):
             render_eda_page()
@@ -785,12 +888,12 @@ def main():
 
     # ---- Bank Staff pages ----
     else:
-        if page == t("nav_single", lang):
+        if page == t("nav_welcome", lang):
+            render_welcome_page()
+        elif page == t("nav_single", lang):
             render_prediction_page()
         elif page == t("nav_batch", lang):
             render_batch_page()
-        elif page == t("nav_about", lang):
-            render_about_page()
 
 
 if __name__ == "__main__":
