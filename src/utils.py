@@ -163,22 +163,24 @@ BASE_CSS = """
 }
 
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
-    background: rgba(255, 255, 255, 0.03) !important;
+    background: rgba(128, 128, 128, 0.08) !important;
     border-radius: 12px !important;
     padding: 10px 15px !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(128, 128, 128, 0.15) !important;
     transition: all 0.3s ease !important;
     width: 100% !important;
 }
 
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(128, 128, 128, 0.15) !important;
     transform: translateX(5px);
 }
 
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:has(input:checked),
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label[data-selected="true"] {
-    background: linear-gradient(90deg, rgba(14, 165, 233, 0.2), rgba(99, 102, 241, 0.2)) !important;
-    border: 1px solid rgba(14, 165, 233, 0.3) !important;
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15)) !important;
+    border: 1px solid rgba(14, 165, 233, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1) !important;
 }
 
 /* Sidebar Control Labels */
@@ -201,29 +203,99 @@ BASE_CSS = """
     padding-left: 10px;
 }
 
-.stTextInput {
+/* Universal Input Settings */
+.stTextInput, [data-testid="stNumberInput"] {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
 }
 
-.stTextInput div[data-baseweb="input"] {
+/* Glassmorphism Capsule for Text and Number Inputs */
+.stTextInput div[data-baseweb="input"], [data-testid="stNumberInputContainer"] {
     border-radius: 25px !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: all 0.3s ease !important;
     min-height: 48px !important;
     padding: 0px 10px !important;
+    overflow: hidden !important; /* ensures children perfectly clip to circular edges */
 }
 
-.stTextInput input {
+/* Unstyle the internal base web inputs to prevent double-boxing */
+[data-testid="stNumberInput"] div[data-baseweb="input"] {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+div[data-baseweb="input"] input, div[data-baseweb="base-input"] {
     background-color: transparent !important;
     font-size: 15px !important;
 }
 
-.stTextInput > div > div {
+div[data-baseweb="input"] div, div[data-baseweb="input"] > div > div {
     border: none !important;
     background-color: transparent !important;
     box-shadow: none !important;
+}
+
+/* Number Input Step Buttons */
+[data-testid="stNumberInput"] button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 0.5 !important;
+    transition: opacity 0.3s ease, background 0.2s ease !important;
+    color: white !important;
+    padding: 0 10px !important;
+}
+[data-testid="stNumberInput"] button svg {
+    fill: white !important;
+    color: white !important;
+}
+[data-testid="stNumberInput"]:hover button {
+    opacity: 0.8 !important;
+}
+[data-testid="stNumberInput"] button:hover {
+    opacity: 1 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+}
+
+/* Inline Code Elements (used for usernames and technical text) */
+code {
+    background-color: rgba(120, 120, 120, 0.2) !important;
+    color: var(--text-color, inherit) !important;
+    padding: 2px 8px !important;
+    border-radius: 6px !important;
+}
+
+/* File Uploader Global Universal Fixes */
+[data-testid="stFileUploader"] section,
+[data-testid="stFileUploader"] div {
+    background-color: transparent !important;
+}
+
+[data-testid="stFileUploader"] span, 
+[data-testid="stFileUploader"] p, 
+[data-testid="stFileUploader"] small {
+    color: white !important;
+}
+
+[data-testid="stFileUploader"] button {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.9), rgba(99, 102, 241, 0.9)) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    padding: 5px 15px !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-testid="stFileUploader"] button:hover {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 1), rgba(129, 140, 248, 1)) !important;
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5) !important;
+    transform: translateY(-2px);
 }
 
 /* Checkbox base */
@@ -251,6 +323,7 @@ button[kind="primaryFormSubmit"]:hover, button[kind="primary"]:hover {
 
 /* Selectboxes base styling */
 div[data-baseweb="select"] > div {
+    background: rgba(100, 100, 100, 0.1) !important;
     backdrop-filter: blur(10px) !important;
     border-radius: 20px !important;
     cursor: pointer !important;
@@ -258,6 +331,47 @@ div[data-baseweb="select"] > div {
 div[data-baseweb="select"] span {
     font-weight: 600 !important;
     font-size: 13px !important;
+}
+
+/* Universal Glassmorphism (Liquid) Dropdown Popup fix */
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] > div {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+ul[data-baseweb="menu"], 
+div[data-testid="stVirtualDropdown"] {
+    background: rgba(100, 100, 100, 0.15) !important;
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+    border: 1px solid rgba(100, 100, 100, 0.3) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    padding: 5px !important;
+}
+
+div[data-testid="stVirtualDropdown"] li, 
+ul[data-baseweb="menu"] li, 
+li[role="option"] {
+    background-color: transparent !important;
+    color: var(--text-color, inherit) !important;
+    border-radius: 8px !important;
+    margin: 2px 0px !important;
+}
+
+div[data-testid="stVirtualDropdown"] li span, 
+ul[data-baseweb="menu"] li span, 
+li[role="option"] span,
+li[role="option"] div {
+    color: var(--text-color, inherit) !important; /* Force text to be visible */
+}
+
+div[data-testid="stVirtualDropdown"] li:hover, 
+ul[data-baseweb="menu"] li:hover, 
+li[role="option"]:hover,
+li[aria-selected="true"] {
+    background: rgba(100, 100, 100, 0.25) !important;
 }
 """
 
@@ -274,7 +388,7 @@ header[data-testid="stHeader"] { display: none; }
     align-items: center;
     height: 100vh;
     padding: 0 !important;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 }
 
@@ -348,15 +462,33 @@ DARK_CSS = """
 }
 
 /* Sidebar Specific Overrides for Dark Mode */
+[data-testid="stSidebar"] > div:first-child {
+    background-image: none !important;
+    background-color: transparent !important;
+}
+
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
     box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Typography */
-.login-title, [data-testid="stSidebar"] h1, [data-testid="stSidebar"] p, .stRadio label p { color: white !important; }
-.input-label, [data-testid="stSidebar"] label { color: rgba(255, 255, 255, 0.9) !important; }
-.stCheckbox p { color: white !important; }
+/* Typography Overrides */
+/* Applying global typography to ensure text is white over dark backgrounds */
+body, p, h1, h2, h3, h4, h5, h6, span, label, li, code, pre, .stMarkdown, div[data-testid="stMetricValue"] {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+h1, h2, h3, h4, .login-title, div[data-testid="stMetricValue"] {
+    color: white !important;
+}
+
+/* Fix Dropdown Menus, Hamburger Menu Text, and Header Icons Visibility in Dark Mode */
+ul[data-baseweb="menu"] *,
+ul[data-testid="main-menu-list"] *,
+div[data-testid="stPopoverBody"] *,
+div[data-testid="stVirtualDropdown"] *,
+header[data-testid="stHeader"] * {
+    color: rgba(255, 255, 255, 0.9) !important;
+    fill: rgba(255, 255, 255, 0.9) !important;
+}
 
 /* Sidebar Radio/Navigation Text color */
 [data-testid="stSidebar"] .stRadio label p {
@@ -364,52 +496,100 @@ DARK_CSS = """
     font-weight: 500 !important;
 }
 
-/* TextInput */
-.stTextInput div[data-baseweb="input"] {
-    background-color: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 10px rgba(0,0,0,0.1) !important;
+/* TextInput and NumberContainer globally handled now */
+.stTextInput div[data-baseweb="input"], [data-testid="stNumberInputContainer"] {
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
-.stTextInput div[data-baseweb="input"]:focus-within {
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+.stTextInput div[data-baseweb="input"]:focus-within, [data-testid="stNumberInputContainer"]:focus-within {
+    border: 1px solid rgba(14, 165, 233, 0.6) !important;
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
-.stTextInput input {
+div[data-baseweb="input"] input {
     color: white !important;
     -webkit-text-fill-color: white !important;
     caret-color: white !important;
 }
-.stTextInput input::placeholder {
+div[data-baseweb="input"] input::placeholder {
     color: rgba(255, 255, 255, 0.5) !important;
     -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
     opacity: 1 !important;
 }
 
-/* Buttons */
+/* Buttons and Navigation Match */
+/* Make primary buttons distinct with a matching colored gradient */
 button[kind="primaryFormSubmit"], button[kind="primary"] {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1)) !important;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.6), rgba(99, 102, 241, 0.6)) !important;
     color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-    box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.2), inset 0 2px 2px rgba(255,255,255,0.4) !important;
+    border: 1px solid rgba(14, 165, 233, 0.4) !important;
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.3), inset 0 2px 2px rgba(255,255,255,0.1) !important;
+    border-radius: 30px !important;
 }
 button[kind="primaryFormSubmit"]:hover, button[kind="primary"]:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2)) !important;
-    box-shadow: 0 10px 30px 0 rgba(255, 255, 255, 0.3), inset 0 2px 2px rgba(255,255,255,0.5) !important;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(99, 102, 241, 0.8)) !important;
+    box-shadow: 0 8px 25px 0 rgba(14, 165, 233, 0.4), inset 0 2px 2px rgba(255,255,255,0.2) !important;
+    border: 1px solid rgba(14, 165, 233, 0.6) !important;
+    color: white !important;
+}
+
+/* Secondary Buttons fallback styling for dark mode */
+button[kind="secondary"], button[data-testid="baseButton-secondary"] {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+}
+button[kind="secondary"]:hover, button[data-testid="baseButton-secondary"]:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar Radio Selected to match buttons */
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label[data-selected="true"] {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.6), rgba(99, 102, 241, 0.6)) !important;
+    border: 1px solid rgba(14, 165, 233, 0.6) !important;
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Selectboxes */
 div[data-baseweb="select"] > div {
-    background-color: rgba(255, 255, 255, 0.12) !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
     color: white !important;
 }
 div[data-baseweb="select"] span {
     color: white !important;
 }
-div[data-testid="stVirtualDropdown"] li { color: white !important; }
-div[data-testid="stVirtualDropdown"] { background-color: #0f172a !important; border: 1px solid rgba(255,255,255,0.2) !important; }
-div[data-baseweb="popover"] > div { background-color: #0f172a !important; }
+
+/* Dataframes / Tables Dark Mode Fixes */
+[data-testid="stDataFrame"] { background-color: transparent !important; }
+[data-testid="stDataFrame"] th, [data-testid="stDataFrame"] td {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Alerts / Messages */
+div[data-testid="stAlert"] {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* File Uploader Dark Theme Outlines */
+[data-testid="stFileUploader"] {
+    background-color: rgba(20, 30, 50, 0.4) !important;
+    border: 1px dashed rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+}
+[data-testid="stFileUploader"]:hover {
+    background-color: rgba(20, 30, 50, 0.6) !important;
+    border: 1px dashed rgba(255, 255, 255, 0.4) !important;
+}
 """
 
 LIGHT_CSS = """
@@ -441,23 +621,23 @@ LIGHT_CSS = """
     font-weight: 500 !important;
 }
 
-/* TextInput */
-.stTextInput div[data-baseweb="input"] {
-    background-color: rgba(255, 255, 255, 0.6) !important;
+/* TextInput and NumberContainer globally handled now */
+.stTextInput div[data-baseweb="input"], [data-testid="stNumberInputContainer"] {
+    background-color: rgba(0, 0, 0, 0.03) !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0,0,0,0.05) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03) !important;
 }
-.stTextInput div[data-baseweb="input"]:focus-within {
+.stTextInput div[data-baseweb="input"]:focus-within, [data-testid="stNumberInputContainer"]:focus-within {
     border: 1px solid rgba(14, 165, 233, 0.6) !important;
-    background-color: rgba(255, 255, 255, 0.95) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
     box-shadow: 0 0 15px rgba(14, 165, 233, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
 }
-.stTextInput input {
+div[data-baseweb="input"] input {
     color: #0f172a !important;
     -webkit-text-fill-color: #0f172a !important;
     caret-color: #0f172a !important;
 }
-.stTextInput input::placeholder {
+div[data-baseweb="input"] input::placeholder {
     color: rgba(15, 23, 42, 0.5) !important;
     -webkit-text-fill-color: rgba(15, 23, 42, 0.5) !important;
     opacity: 1 !important;
@@ -469,24 +649,71 @@ button[kind="primaryFormSubmit"], button[kind="primary"] {
     color: white !important;
     border: 1px solid rgba(14, 165, 233, 0.4) !important;
     box-shadow: 0 8px 25px 0 rgba(14, 165, 233, 0.25), inset 0 2px 2px rgba(255,255,255,0.2) !important;
+    border-radius: 30px !important;
 }
 button[kind="primaryFormSubmit"]:hover, button[kind="primary"]:hover {
     background: linear-gradient(135deg, rgba(56, 189, 248, 1), rgba(129, 140, 248, 1)) !important;
     box-shadow: 0 10px 30px 0 rgba(14, 165, 233, 0.35), inset 0 2px 2px rgba(255,255,255,0.3) !important;
 }
 
-/* Selectboxes */
-div[data-baseweb="select"] > div {
+/* Secondary Buttons fallback in Light Mode */
+button[kind="secondary"], button[data-testid="baseButton-secondary"] {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    color: #0f172a !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02) !important;
+}
+button[kind="secondary"]:hover, button[data-testid="baseButton-secondary"]:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* File Uploader Light Mode Defaults */
+[data-testid="stFileUploader"] {
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+}
+[data-testid="stFileUploader"]:hover {
     background-color: rgba(255, 255, 255, 0.7) !important;
+    border: 1px dashed rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-testid="stFileUploader"] span, 
+[data-testid="stFileUploader"] p, 
+[data-testid="stFileUploader"] small {
+    color: #0f172a !important;
+}
+
+[data-testid="stFileUploader"] button {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #0f172a !important;
+    border: 1px solid rgba(14, 165, 233, 0.3) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1px 2px rgba(255, 255, 255, 1) !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stFileUploader"] button:hover {
+    background: rgba(255, 255, 255, 1) !important;
+    color: #0ea5e9 !important;
+    border: 1px solid rgba(14, 165, 233, 0.6) !important;
+    box-shadow: 0 6px 15px rgba(14, 165, 233, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+/* Selectboxes and Dropdowns globally in light mode */
+div[data-baseweb="select"] > div {
+    background-color: rgba(0, 0, 0, 0.03) !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
     color: #0f172a !important;
 }
 div[data-baseweb="select"] span {
     color: #0f172a !important;
 }
-div[data-testid="stVirtualDropdown"] li { color: #0f172a !important; }
-div[data-testid="stVirtualDropdown"] { background-color: #f8fafc !important; border: 1px solid #e2e8f0 !important; }
-div[data-baseweb="popover"] > div { background-color: #f8fafc !important; }
 """
 
 def inject_theme_css(theme_key, is_login=False):

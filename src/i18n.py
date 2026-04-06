@@ -903,11 +903,6 @@ TRANSLATIONS = {
         "RU": "Войти",
         "EN": "Sign in",
     },
-    "auth_email": {
-        "UZ": "Email",
-        "RU": "Email",
-        "EN": "Email",
-    },
     "auth_username": {
         "UZ": "Foydalanuvchi nomi",
         "RU": "Имя пользователя",
@@ -918,30 +913,10 @@ TRANSLATIONS = {
         "RU": "Пароль",
         "EN": "Password",
     },
-    "auth_remember": {
-        "UZ": "Eslab qolish",
-        "RU": "Запомнить меня",
-        "EN": "Remember me",
-    },
-    "auth_forgot": {
-        "UZ": "Parolni unutdingizmi?",
-        "RU": "Забыли пароль?",
-        "EN": "Forgot password?",
-    },
     "auth_login_btn": {
         "UZ": "Kirish",
         "RU": "Войти",
         "EN": "Login",
-    },
-    "auth_not_registered": {
-        "UZ": "Ro'yxatdan o'tmaganmisiz?",
-        "RU": "Нет аккаунта?",
-        "EN": "Not registred?",
-    },
-    "auth_create_account": {
-        "UZ": "Hisob yarating!",
-        "RU": "Создать аккаунт!",
-        "EN": "Create an account!",
     },
     "auth_error": {
         "UZ": "Iltimos foydalanuvchi nomi va parolni kiriting",
@@ -957,26 +932,6 @@ TRANSLATIONS = {
         "UZ": "Chiqish",
         "RU": "Выход",
         "EN": "Logout",
-    },
-    "auth_register_btn": {
-        "UZ": "Ro'yxatdan o'tish",
-        "RU": "Регистрация",
-        "EN": "Register",
-    },
-    "auth_admin_login_btn": {
-        "UZ": "Admin Kirish",
-        "RU": "Вход для Админа",
-        "EN": "Admin Login",
-    },
-    "auth_login_as_admin_btn": {
-        "UZ": "Admin sifatida kirish",
-        "RU": "Войти как Администратор",
-        "EN": "Log in as Admin",
-    },
-    "auth_back_to_staff": {
-        "UZ": "← Xodimlar kirishiga qaytish",
-        "RU": "← Назад к входу для сотрудников",
-        "EN": "← Back to Staff Login",
     },
 
     # ==========================================================================
@@ -1063,60 +1018,6 @@ TRANSLATIONS = {
         "EN": "Actions",
     },
 
-    # ==========================================================================
-    # Forgot / Reset Password
-    # ==========================================================================
-    "forgot_title": {
-        "UZ": "🔑 Parolni Tiklash",
-        "RU": "🔑 Восстановление Пароля",
-        "EN": "🔑 Reset Password",
-    },
-    "forgot_username_label": {
-        "UZ": "Foydalanuvchi nomingiz",
-        "RU": "Ваше имя пользователя",
-        "EN": "Your Username",
-    },
-    "forgot_new_password": {
-        "UZ": "Yangi parol",
-        "RU": "Новый пароль",
-        "EN": "New Password",
-    },
-    "forgot_confirm_password": {
-        "UZ": "Parolni tasdiqlang",
-        "RU": "Подтвердите пароль",
-        "EN": "Confirm New Password",
-    },
-    "forgot_reset_btn": {
-        "UZ": "Parolni Yangilash",
-        "RU": "Обновить Пароль",
-        "EN": "Update Password",
-    },
-    "forgot_success": {
-        "UZ": "✓ Parol muvaffaqiyatli yangilandi! Iltimos, kiring.",
-        "RU": "✓ Пароль успешно обновлён! Пожалуйста, войдите.",
-        "EN": "✓ Password updated successfully! Please log in.",
-    },
-    "forgot_user_not_found": {
-        "UZ": "Bu foydalanuvchi nomi topilmadi.",
-        "RU": "Пользователь с таким именем не найден.",
-        "EN": "No account found with that username.",
-    },
-    "forgot_passwords_mismatch": {
-        "UZ": "Parollar mos kelmaydi.",
-        "RU": "Пароли не совпадают.",
-        "EN": "Passwords do not match.",
-    },
-    "auth_contact_admin": {
-        "UZ": "Agar parolingizni unutgan bo'lsangiz, uni tiklash uchun tizim administratoriga murojaat qiling.",
-        "RU": "Если вы забыли свой пароль, пожалуйста, обратитесь к системному администратору для его сброса.",
-        "EN": "If you forgot your password, please contact the System Administrator to reset it.",
-    },
-    "back_to_login": {
-        "UZ": "← Kirishga qaytish",
-        "RU": "← Назад к входу",
-        "EN": "← Back to Login",
-    },
-    
     # ==========================================================================
     # Themes
     # ==========================================================================

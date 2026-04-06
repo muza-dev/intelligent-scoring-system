@@ -124,7 +124,7 @@ def render_login_page():
                 else:
                     st.session_state.failed_attempts += 1
                     if st.session_state.failed_attempts >= 3:
-                        st.error(f"{t('auth_invalid_credentials', lang)} {t('auth_contact_admin', lang)}")
+                        st.error(t('auth_invalid_credentials', lang))
                     else:
                         st.error(t("auth_invalid_credentials", lang))
             else:

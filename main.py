@@ -38,7 +38,7 @@ logger = setup_logging("streamlit_app")
 # Page Configuration
 # =============================================================================
 st.set_page_config(
-    page_title="Loan Approval Prediction",
+    page_title="Intelligent Scoring",
     page_icon="🏦",
     layout="wide",
     initial_sidebar_state="expanded",
