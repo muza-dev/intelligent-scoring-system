@@ -1,5 +1,5 @@
 """
-Model evaluation module for the Loan Approval Prediction application.
+Model evaluation module for the Intelligent Scoring application.
 """
 import joblib
 import numpy as np
@@ -19,27 +19,10 @@ from sklearn.metrics import (
 from . import config
 from .data_loader import load_and_split
 from .utils import setup_logging, model_exists
+from .predict import load_model
 
 logger = setup_logging(__name__)
 
-
-def load_model():
-    """
-    Load trained model from disk.
-    
-    Returns:
-        Trained sklearn Pipeline
-        
-    Raises:
-        FileNotFoundError: If model doesn't exist
-    """
-    if not model_exists():
-        raise FileNotFoundError(
-            f"Model not found at {config.MODEL_PATH}. "
-            "Please train the model first using: python -m src.train"
-        )
-    
-    return joblib.load(config.MODEL_PATH)
 
 
 def calculate_metrics(y_true, y_pred, y_proba=None) -> dict:

@@ -1,5 +1,5 @@
 """
-Internationalization (i18n) module for the Loan Approval Prediction application.
+Internationalization (i18n) module for the Intelligent Scoring application.
 Supports: English (EN), Uzbek (UZ), Russian (RU)
 """
 
@@ -395,19 +395,19 @@ TRANSLATIONS = {
         "EN": "Bad (0)",
     },
     "applicant_income": {
-        "UZ": "Ariza Beruvchi Daromadi ($)",
-        "RU": "Доход Заявителя ($)",
-        "EN": "Applicant Income ($)",
+        "UZ": "Ariza Beruvchi Daromadi (UZS)",
+        "RU": "Доход Заявителя (UZS)",
+        "EN": "Applicant Income (UZS)",
     },
     "coapplicant_income": {
-        "UZ": "Qo'shma Ariza Beruvchi Daromadi ($)",
-        "RU": "Доход Созаявителя ($)",
-        "EN": "Coapplicant Income ($)",
+        "UZ": "Qo'shma Ariza Beruvchi Daromadi (UZS)",
+        "RU": "Доход Созаявителя (UZS)",
+        "EN": "Coapplicant Income (UZS)",
     },
     "loan_amount": {
-        "UZ": "Kredit Miqdori (minglar)",
-        "RU": "Сумма Кредита (в тысячах)",
-        "EN": "Loan Amount (in thousands)",
+        "UZ": "Kredit Miqdori (UZS)",
+        "RU": "Сумма Кредита (UZS)",
+        "EN": "Loan Amount (UZS)",
     },
     "loan_term": {
         "UZ": "Kredit Muddati (oylar)",
@@ -534,7 +534,7 @@ TRANSLATIONS = {
         "EN": "Total rows",
     },
     "missing_columns": {
-        "UZ": "⚠️ Etishmayotgan kerakli ustunlar: ",
+        "UZ": "⚠️ Yetishmayotgan kerakli ustunlar: ",
         "RU": "⚠️ Отсутствуют обязательные столбцы: ",
         "EN": "⚠️ Missing required columns: ",
     },
@@ -618,7 +618,7 @@ TRANSLATIONS = {
         "EN": "Columns",
     },
     "missing_values": {
-        "UZ": "Etishmayotgan Qiymatlar",
+        "UZ": "Yetishmayotgan Qiymatlar",
         "RU": "Пропущенные Значения",
         "EN": "Missing Values",
     },
@@ -722,9 +722,9 @@ TRANSLATIONS = {
         "EN": "Model",
     },
     "models_compared": {
-        "UZ": "Ilova ikki modelni solishtiradi:",
-        "RU": "Приложение сравнивает две модели:",
-        "EN": "The application compares two models:",
+        "UZ": "Ilova beshta mashinaviy o'rganish modelini solishtiradi:",
+        "RU": "Приложение сравнивает пять моделей машинного обучения:",
+        "EN": "The application compares five machine learning models:",
     },
     "baseline": {
         "UZ": "asosiy",
@@ -732,9 +732,24 @@ TRANSLATIONS = {
         "EN": "baseline",
     },
     "strong": {
-        "UZ": "kuchli",
-        "RU": "сильная",
-        "EN": "strong",
+        "UZ": "kuchli daraxtlar qatori",
+        "RU": "ансамбль деревьев",
+        "EN": "tree ensemble",
+    },
+    "svm_desc": {
+        "UZ": "chiziqsiz klassifikator",
+        "RU": "нелинейный классификатор",
+        "EN": "non-linear classifier",
+    },
+    "mlp_desc": {
+        "UZ": "ko'p qatlamli neyron tarmoq",
+        "RU": "многослойная нейронная сеть",
+        "EN": "multi-layer neural network",
+    },
+    "rbf_desc": {
+        "UZ": "radial bazis funksiyasi tarmog'i",
+        "RU": "сеть радиальной базисной функции",
+        "EN": "radial basis function network",
     },
     "cv_selection": {
         "UZ": "Eng yaxshi model 5-fold cross-validation orqali avtomatik tanlanadi.",
@@ -747,12 +762,12 @@ TRANSLATIONS = {
         "EN": "Preprocessing",
     },
     "preprocessing_numeric": {
-        "UZ": "Raqamli xususiyatlar: Etishmayotgan qiymatlar median bilan to'ldiriladi, keyin standartlashtiriladi",
+        "UZ": "Raqamli xususiyatlar: Yetishmayotgan qiymatlar median bilan to'ldiriladi, keyin standartlashtiriladi",
         "RU": "Числовые признаки: Пропущенные значения заполняются медианой, затем стандартизируются",
         "EN": "Numeric features: Missing values imputed with median, then standardized",
     },
     "preprocessing_categorical": {
-        "UZ": "Kategorik xususiyatlar: Etishmayotgan qiymatlar eng ko'p uchraydigan qiymat bilan to'ldiriladi, keyin one-hot kodlanadi",
+        "UZ": "Kategorik xususiyatlar: Yetishmayotgan qiymatlar eng ko'p uchraydigan qiymat bilan to'ldiriladi, keyin one-hot kodlanadi",
         "RU": "Категориальные признаки: Пропущенные значения заполняются наиболее частым значением, затем one-hot кодируются",
         "EN": "Categorical features: Missing values imputed with most frequent, then one-hot encoded",
     },
@@ -777,7 +792,7 @@ TRANSLATIONS = {
         "EN": "Class imbalance: More approvals than rejections in the data",
     },
     "limitation_features": {
-        "UZ": "Etishmayotgan xususiyatlar: Haqiqiy dunyoda kredit bali, ish tarixi kiritiladi",
+        "UZ": "Yetishmayotgan xususiyatlar: Haqiqiy dunyoda kredit bali, ish tarixi kiritiladi",
         "RU": "Отсутствующие признаки: В реальности нужны кредитный рейтинг, история занятости",
         "EN": "Missing features: Real-world would include credit score, employment history",
     },
@@ -928,6 +943,11 @@ TRANSLATIONS = {
         "RU": "Неверное имя пользователя или пароль.",
         "EN": "Invalid username or password.",
     },
+    "auth_timeout": {
+        "UZ": "Sizning seansingiz harakatsizlik tufayli yakunlandi. Iltimos, tizimga qayta kiring.",
+        "RU": "Ваш сеанс истек из-за неактивности. Пожалуйста, войдите снова.",
+        "EN": "Your session has expired due to inactivity. Please log in again.",
+    },
     "logout": {
         "UZ": "Chiqish",
         "RU": "Выход",
@@ -1019,7 +1039,7 @@ TRANSLATIONS = {
     },
 
     # ==========================================================================
-    # Themes
+    # s
     # ==========================================================================
     "theme": {
         "UZ": "Mavzu",

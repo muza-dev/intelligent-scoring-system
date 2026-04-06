@@ -1,5 +1,5 @@
 """
-Configuration constants for the Loan Approval Prediction application.
+Configuration constants for the Intelligent Scoring application.
 """
 from pathlib import Path
 
@@ -15,9 +15,21 @@ MODELS_DIR = PROJECT_ROOT / "models"
 TRAIN_DATA_PATH = RAW_DATA_DIR / "train.csv"
 SAMPLE_INPUT_PATH = DATA_DIR / "sample_input.csv"
 
-# Model files
+# Legacy single-model files (kept for backward compat)
 MODEL_PATH = MODELS_DIR / "loan_model.joblib"
 METADATA_PATH = MODELS_DIR / "model_metadata.json"
+
+# Multi-model registry
+MODEL_REGISTRY_PATH = MODELS_DIR / "registry.json"
+
+# Per-model artifact paths (add new models here as needed)
+MODEL_PATHS = {
+    "LogisticRegression": MODELS_DIR / "logistic_regression.joblib",
+    "RandomForest":       MODELS_DIR / "random_forest.joblib",
+    "SVM":                MODELS_DIR / "svm.joblib",
+    "MLP":                MODELS_DIR / "mlp.joblib",
+    "RBFNetwork":         MODELS_DIR / "rbf_network.joblib",
+}
 
 # =============================================================================
 # Dataset Configuration
@@ -70,6 +82,32 @@ RANDOM_FOREST_PARAMS = {
     "min_samples_leaf": 2,
     "random_state": RANDOM_STATE,
     "n_jobs": -1,
+}
+
+# SVM — Support Vector Machine (RBF kernel for nonlinear boundaries)
+SVM_PARAMS = {
+    "C": 1.0,
+    "kernel": "rbf",
+    "gamma": "scale",
+    "probability": True,   # needed for predict_proba
+    "random_state": RANDOM_STATE,
+}
+
+# MLP — Feedforward Neural Network (Multi-Layer Perceptron)
+MLP_PARAMS = {
+    "hidden_layer_sizes": (64, 32),
+    "activation": "relu",
+    "solver": "adam",
+    "max_iter": 500,
+    "random_state": RANDOM_STATE,
+}
+
+# RBF Network — approximated via SVM with explicit RBF feature map (Nystroem)
+# Uses sklearn's Nystroem kernel approximation + LinearSVC for efficiency
+RBF_NETWORK_PARAMS = {
+    "n_components": 100,       # number of RBF basis functions
+    "gamma": 0.1,
+    "random_state": RANDOM_STATE,
 }
 
 # =============================================================================

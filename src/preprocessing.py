@@ -1,5 +1,5 @@
 """
-Preprocessing pipeline for the Loan Approval Prediction application.
+Preprocessing pipeline for the Intelligent Scoring application.
 """
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer

@@ -1,5 +1,5 @@
 """
-Model explanation module for the Loan Approval Prediction application.
+Model explanation module for the Intelligent Scoring application.
 """
 import joblib
 import numpy as np
@@ -11,24 +11,10 @@ from . import config
 from .data_loader import load_and_split
 from .preprocessing import get_feature_names_after_preprocessing
 from .utils import setup_logging, model_exists
+from .predict import load_model
 
 logger = setup_logging(__name__)
 
-
-def load_model():
-    """
-    Load trained model from disk.
-    
-    Returns:
-        Trained sklearn Pipeline
-    """
-    if not model_exists():
-        raise FileNotFoundError(
-            f"Model not found at {config.MODEL_PATH}. "
-            "Please train the model first using: python -m src.train"
-        )
-    
-    return joblib.load(config.MODEL_PATH)
 
 
 def get_feature_importance(model=None, X_test=None, y_test=None) -> pd.DataFrame:

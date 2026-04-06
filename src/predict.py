@@ -1,5 +1,5 @@
 """
-Prediction module for the Loan Approval Prediction application.
+Prediction module for the Intelligent Scoring application.
 """
 import argparse
 import joblib
@@ -12,23 +12,35 @@ from .utils import setup_logging, model_exists
 logger = setup_logging(__name__)
 
 
-def load_model():
+def load_model(model_key: str | None = None):
     """
-    Load trained model from disk.
-    
+    Load a trained model from disk.
+
+    Args:
+        model_key: Registry key e.g. 'RandomForest'. If None, loads the active model.
+
     Returns:
         Trained sklearn Pipeline
-        
+
     Raises:
         FileNotFoundError: If model doesn't exist
     """
+    from .utils import get_active_model_key
+
+    key = model_key or get_active_model_key()
+
+    if key and key in config.MODEL_PATHS:
+        path = config.MODEL_PATHS[key]
+        if path.exists():
+            logger.info(f"Loading model '{key}' from {path}")
+            return joblib.load(path)
+
+    # Legacy fallback
     if not model_exists():
         raise FileNotFoundError(
-            f"Model not found at {config.MODEL_PATH}. "
-            "Please train the model first using: python -m src.train"
+            "No trained model found. Please train the model first."
         )
-    
-    logger.info(f"Loading model from {config.MODEL_PATH}")
+    logger.info(f"Loading legacy model from {config.MODEL_PATH}")
     return joblib.load(config.MODEL_PATH)
 
 
@@ -145,7 +157,7 @@ def smoke_test():
 
 def main():
     """Main entry point for prediction module."""
-    parser = argparse.ArgumentParser(description="Loan Approval Prediction")
+    parser = argparse.ArgumentParser(description="Intelligent Scoring")
     parser.add_argument(
         "--smoke-test",
         action="store_true",

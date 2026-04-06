@@ -8,10 +8,27 @@ from src.security import hash_password, verify_password
 init_admin()
 
 
+TIMEOUT_SECONDS = 10 * 60  # 10 minutes inactivity timeout
+
 def check_password():
     """Returns True if the user is authenticated."""
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
+        
+    if st.session_state.authenticated:
+        now = time.time()
+        # Default to now if not set so the first check passes
+        last_activity = st.session_state.get("last_activity", now)
+        
+        if now - last_activity > TIMEOUT_SECONDS:
+            # Session expired
+            st.session_state.timeout_occurred = True
+            logout()
+            return False
+            
+        # Update last activity on every meaningful interaction/rerun
+        st.session_state.last_activity = now
+        
     return st.session_state.authenticated
 
 
@@ -26,7 +43,7 @@ def is_admin():
 
 def logout():
     """Clears authentication state and reruns the app."""
-    for key in ("authenticated", "role", "username", "failed_attempts"):
+    for key in ("authenticated", "role", "username", "failed_attempts", "last_activity"):
         st.session_state.pop(key, None)
     st.rerun()
 
@@ -100,6 +117,10 @@ def render_login_page():
     # Unified Login (Admin & Staff)
     # -------------------------------------------------------------------------
     st.markdown('<div class="login-title">Login</div>', unsafe_allow_html=True)
+
+    if st.session_state.get("timeout_occurred"):
+        st.warning(t("auth_timeout", lang), icon="⏱️")
+        st.session_state.timeout_occurred = False
 
     with st.form("login_form", clear_on_submit=False):
         st.markdown(f'<div class="input-label">{t("auth_username", lang)}</div>', unsafe_allow_html=True)

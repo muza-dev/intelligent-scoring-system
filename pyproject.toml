@@ -1,7 +1,7 @@
 [project]
 name = "loan-approval-app"
 version = "0.1.0"
-description = "Loan Approval Prediction Application using Machine Learning"
+description = "Intelligent Scoring Application using Machine Learning"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

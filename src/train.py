@@ -1,16 +1,19 @@
 """
-Model training module for the Loan Approval Prediction application.
+Model training module for the Intelligent Scoring application.
 """
 import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.kernel_approximation import Nystroem
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 
 from . import config
 from .data_loader import load_and_split
 from .preprocessing import create_preprocessor, get_feature_names_after_preprocessing
-from .utils import setup_logging, save_metadata, get_current_timestamp
+from .utils import setup_logging, save_metadata, get_current_timestamp, _make_serializable
 
 logger = setup_logging(__name__)
 
@@ -30,8 +33,24 @@ def create_models() -> dict[str, Pipeline]:
             ("classifier", LogisticRegression(**config.LOGISTIC_REGRESSION_PARAMS)),
         ]),
         "RandomForest": Pipeline([
-            ("preprocessor", create_preprocessor()),  # Each pipeline needs its own preprocessor
+            ("preprocessor", create_preprocessor()),
             ("classifier", RandomForestClassifier(**config.RANDOM_FOREST_PARAMS)),
+        ]),
+        "SVM": Pipeline([
+            ("preprocessor", create_preprocessor()),
+            ("classifier", SVC(**config.SVM_PARAMS)),
+        ]),
+        "MLP": Pipeline([
+            ("preprocessor", create_preprocessor()),
+            ("classifier", MLPClassifier(**config.MLP_PARAMS)),
+        ]),
+        # RBF Network: Nystroem maps features into RBF kernel space,
+        # then Logistic Regression learns linear boundaries in that space.
+        # This is the standard sklearn approximation of an RBF Network.
+        "RBFNetwork": Pipeline([
+            ("preprocessor", create_preprocessor()),
+            ("rbf_sampler", Nystroem(**config.RBF_NETWORK_PARAMS)),
+            ("classifier", LogisticRegression(max_iter=1000, random_state=config.RANDOM_STATE)),
         ]),
     }
     
@@ -88,73 +107,90 @@ def select_best_model(
 
 def train_model(save: bool = True) -> tuple[Pipeline, dict]:
     """
-    Train the best model and optionally save to disk.
-    
-    Args:
-        save: Whether to save the trained model to disk
-        
+    Train ALL candidate models, save each individually, and update the registry.
+    The model with the best CV score is marked as active (unless admin already set one).
+
     Returns:
-        Tuple of (trained pipeline, metadata dict)
+        Tuple of (best pipeline, best model metadata dict)
     """
     logger.info("=" * 50)
-    logger.info("Starting model training")
+    logger.info("Starting model training — all models")
     logger.info("=" * 50)
-    
+
     # Load and split data
     X_train, X_test, y_train, y_test = load_and_split()
-    
-    # Create models
+
+    # Create all candidate models
     models = create_models()
-    
-    # Select best model via cross-validation
-    best_name, best_pipeline, cv_results = select_best_model(models, X_train, y_train)
-    
-    # Fit best model on full training set
-    logger.info(f"Training {best_name} on full training set...")
-    best_pipeline.fit(X_train, y_train)
-    
-    # Calculate test score
-    test_score = best_pipeline.score(X_test, y_test)
-    logger.info(f"Test accuracy: {test_score:.4f}")
-    
-    # Get feature names after preprocessing
-    try:
-        feature_names = get_feature_names_after_preprocessing(
-            best_pipeline.named_steps["preprocessor"]
-        )
-    except Exception as e:
-        logger.warning(f"Could not get feature names: {e}")
-        feature_names = []
-    
-    # Build metadata
-    metadata = {
-        "model_name": best_name,
-        "training_date": get_current_timestamp(),
-        "dataset_shape": {
-            "train_samples": len(X_train),
-            "test_samples": len(X_test),
-            "n_features": len(config.FEATURE_COLUMNS),
-        },
-        "feature_columns": config.FEATURE_COLUMNS,
-        "feature_names_transformed": feature_names,
-        "cv_results": cv_results,
-        "test_accuracy": test_score,
-        "random_state": config.RANDOM_STATE,
-    }
-    
+
+    # Run CV to rank them (doesn't fit fully yet)
+    best_name, _, cv_results = select_best_model(models, X_train, y_train)
+
     if save:
-        # Save model
         config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
-        joblib.dump(best_pipeline, config.MODEL_PATH)
-        logger.info(f"Model saved to {config.MODEL_PATH}")
-        
-        # Save metadata
-        save_metadata(metadata)
-        logger.info(f"Metadata saved to {config.METADATA_PATH}")
-    
+
+    trained_pipelines: dict[str, Pipeline] = {}
+    metadata_all: dict[str, dict] = {}
+
+    for name, pipeline in models.items():
+        logger.info(f"Fitting {name} on full training set...")
+        pipeline.fit(X_train, y_train)
+        test_score = pipeline.score(X_test, y_test)
+        logger.info(f"  {name} test accuracy: {test_score:.4f}")
+
+        try:
+            feature_names = get_feature_names_after_preprocessing(
+                pipeline.named_steps["preprocessor"]
+            )
+        except Exception as e:
+            logger.warning(f"Could not get feature names for {name}: {e}")
+            feature_names = []
+
+        meta = {
+            "model_name": name,
+            "training_date": get_current_timestamp(),
+            "dataset_shape": {
+                "train_samples": len(X_train),
+                "test_samples": len(X_test),
+                "n_features": len(config.FEATURE_COLUMNS),
+            },
+            "feature_columns": config.FEATURE_COLUMNS,
+            "feature_names_transformed": feature_names,
+            "cv_mean_accuracy": cv_results.get(name, {}).get("mean_accuracy", 0),
+            "cv_std_accuracy": cv_results.get(name, {}).get("std_accuracy", 0),
+            "cv_results": cv_results.get(name, {}),
+            "test_accuracy": test_score,
+            "random_state": config.RANDOM_STATE,
+        }
+
+        trained_pipelines[name] = pipeline
+        metadata_all[name] = meta
+
+        if save:
+            model_path = config.MODEL_PATHS.get(name)
+            if model_path:
+                joblib.dump(pipeline, model_path)
+                logger.info(f"  Saved {name} → {model_path}")
+
+    if save:
+        from .utils import load_registry, save_registry
+        registry = load_registry()
+
+        # Preserve the admin's active choice if it still exists
+        current_active = registry.get("active")
+        registry["models"] = _make_serializable(metadata_all)
+        if current_active not in metadata_all:
+            registry["active"] = best_name  # default to CV winner
+        save_registry(registry)
+        logger.info(f"Registry updated — active model: {registry['active']}")
+
+        # Legacy: also save the best model as loan_model.joblib
+        joblib.dump(trained_pipelines[best_name], config.MODEL_PATH)
+        save_metadata(metadata_all[best_name])
+
     logger.info("Training complete!")
-    
-    return best_pipeline, metadata
+    return trained_pipelines[best_name], metadata_all[best_name]
+
 
 
 def main():

@@ -1,5 +1,5 @@
 """
-Streamlit application for Loan Approval Prediction.
+Streamlit application for Intelligent Scoring.
 
 Multi-page app with:
 - Train & Metrics: Train model, view metrics, confusion matrix, ROC curve
@@ -25,7 +25,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src import config
-from src.utils import setup_logging, model_exists, load_metadata, inject_theme_css
+from src.utils import (
+    setup_logging, model_exists, load_metadata,
+    load_registry, set_active_model, get_active_model_key,
+    inject_theme_css,
+)
 from src.predict import load_model, predict_single, predict_batch
 from src.explain import get_aggregated_feature_importance, plot_feature_importance
 from src.eda import render_eda_page
@@ -92,19 +96,19 @@ def get_lang() -> str:
 # Caching
 # =============================================================================
 @st.cache_resource
-def get_model():
-    """Load and cache the trained model."""
+def get_model(model_key: str = ""):
+    """Load and cache a model by key. Pass empty string to load the active model."""
     if not model_exists():
         return None
-    return load_model()
+    return load_model(model_key if model_key else None)
 
 
 @st.cache_data
-def get_cached_metadata():
-    """Load and cache model metadata."""
+def get_cached_metadata(model_key: str = ""):
+    """Load and cache metadata for the given model key (empty = active model)."""
     try:
-        return load_metadata()
-    except FileNotFoundError:
+        return load_metadata(model_key if model_key else None)
+    except (FileNotFoundError, Exception):
         return None
 
 
@@ -112,6 +116,35 @@ def clear_model_cache():
     """Clear cached model and metadata."""
     get_model.clear()
     get_cached_metadata.clear()
+    get_cached_evaluation.clear()
+    get_cached_feature_importance.clear()
+
+
+@st.cache_data(show_spinner=False)
+def get_cached_evaluation(model_key: str = ""):
+    """
+    Run evaluate_model() for the given model key and cache the result.
+    Pass empty string to evaluate whichever model is currently active.
+    """
+    from src.evaluate import evaluate_model
+    model = get_model(model_key)
+    if model is None:
+        return None
+    return evaluate_model(model)
+
+
+@st.cache_data(show_spinner=False)
+def get_cached_feature_importance(model_key: str = ""):
+    """
+    Run get_aggregated_feature_importance() for the given model key and cache the result.
+    Pass empty string to use the currently active model.
+    """
+    from src.explain import get_aggregated_feature_importance
+    model = get_model(model_key)
+    if model is None:
+        return None
+    return get_aggregated_feature_importance(model=model)
+
 
 
 # =============================================================================
@@ -217,7 +250,7 @@ def render_sidebar():
         selected_theme = st.selectbox(
             t("theme", lang),
             options=list(theme_options.keys()),
-            format_func=lambda x: f"{theme_options[x]} {t(x, lang).split()[-1]}", # Shorter text
+            format_func=lambda x: f"{theme_options[x]} {t(x, lang).split()[0]}",  # Use first word — unique across all languages
             index=list(theme_options.keys()).index(current_theme),
             key="dashboard_theme_selector",
             label_visibility="collapsed" if role == "staff" else "visible"
@@ -271,14 +304,34 @@ def render_sidebar():
 
     st.sidebar.markdown("---")
 
-    # Model status (relevant for admin)
+    # Model status
     if role == "admin":
-        if model_exists():
-            st.sidebar.success(t("model_trained", lang))
-            metadata = get_cached_metadata()
-            if metadata:
-                st.sidebar.caption(f"{t('model', lang)}: {metadata.get('model_name', 'Unknown')}")
-                st.sidebar.caption(f"{t('accuracy', lang)}: {metadata.get('test_accuracy', 0):.2%}")
+        registry = load_registry()
+        trained_models = registry.get("models", {})
+        active_key = registry.get("active")
+
+        if trained_models:
+            # Selectbox to switch active model
+            model_keys = list(trained_models.keys())
+            current_idx = model_keys.index(active_key) if active_key in model_keys else 0
+            chosen = st.sidebar.selectbox(
+                "🤖 Active Model",
+                model_keys,
+                index=current_idx,
+                key="active_model_selector",
+                format_func=lambda k: f"{k} ({trained_models[k].get('test_accuracy', 0):.2%})"
+            )
+            if chosen != active_key:
+                set_active_model(chosen)
+                get_model.clear()
+                get_cached_metadata.clear()
+                st.rerun()
+
+            active_key = get_active_model_key()
+            meta = get_cached_metadata(active_key or "")
+            if meta:
+                st.sidebar.success(t("model_trained", lang))
+                st.sidebar.caption(f"{t('accuracy', lang)}: {meta.get('test_accuracy', 0):.2%}")
         else:
             st.sidebar.warning(t("no_model", lang))
         st.sidebar.markdown("---")
@@ -336,11 +389,22 @@ def render_train_page():
                     logger.exception("Training error")
     
     with col2:
-        if model_exists():
-            metadata = get_cached_metadata()
-            if metadata:
-                st.metric(t("model_type", lang), metadata.get("model_name", "Unknown"))
-                st.metric(t("test_accuracy", lang), f"{metadata.get('test_accuracy', 0):.2%}")
+        # Show comparison table of all trained models
+        registry = load_registry()
+        trained_models = registry.get("models", {})
+        active_key = registry.get("active")
+        if trained_models:
+            import pandas as pd
+            rows = []
+            for mkey, mmeta in trained_models.items():
+                rows.append({
+                    "Model": ("✅ " if mkey == active_key else "   ") + mkey,
+                    "Test Acc": f"{mmeta.get('test_accuracy', 0):.2%}",
+                    "CV Acc": f"{mmeta.get('cv_mean_accuracy', 0):.2%} ± {mmeta.get('cv_std_accuracy', 0):.2%}",
+                    "Trained": str(mmeta.get('training_date', ''))[:10],
+                })
+            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
     
     # Metrics section (only if model exists)
     if not model_exists():
@@ -350,11 +414,14 @@ def render_train_page():
     st.markdown("---")
     st.header(t("evaluation_results", lang))
     
+    # Use cached evaluation for the currently active model
+    results = get_cached_evaluation(active_key or "")
+    
+    if results is None:
+        st.error("Could not evaluate the model. Please check the logs.")
+        return
+
     try:
-        from src.evaluate import evaluate_model
-        
-        with st.spinner(t("evaluating", lang)):
-            results = evaluate_model()
         
         # Metrics
         col1, col2, col3, col4, col5 = st.columns(5)
@@ -383,8 +450,13 @@ def render_train_page():
         st.markdown("---")
         st.subheader(t("feature_importance", lang))
         
-        importance_df = get_aggregated_feature_importance()
+        # Use cached feature importance for the currently active model
+        importance_df = get_cached_feature_importance(active_key or "")
         
+        if importance_df is None or importance_df.empty:
+            st.info("Feature importance is not available for this model.")
+            return
+
         importance_col1, importance_col2 = st.columns([2, 1])
         
         with importance_col1:
@@ -482,28 +554,30 @@ def render_prediction_page():
             applicant_income = st.number_input(
                 t("applicant_income", lang),
                 min_value=0,
-                max_value=100000,
-                value=5000,
-                step=100
+                max_value=1000000000,
+                value=5000000,
+                step=100000
             )
             coapplicant_income = st.number_input(
                 t("coapplicant_income", lang),
                 min_value=0,
-                max_value=100000,
+                max_value=1000000000,
                 value=0,
-                step=100
+                step=100000
             )
             loan_amount = st.number_input(
                 t("loan_amount", lang),
-                min_value=1,
-                max_value=1000,
-                value=150,
-                step=10
+                min_value=100000,
+                max_value=5000000000,
+                value=15000000,
+                step=500000
             )
-            loan_term = st.selectbox(
+            loan_term = st.number_input(
                 t("loan_term", lang),
-                [360, 180, 120, 84, 60, 36, 12],
-                index=0
+                min_value=1,
+                max_value=600,
+                value=1,
+                step=1
             )
         
         submit = st.form_submit_button(t("predict_button", lang), type="primary", use_container_width=True)
@@ -516,9 +590,9 @@ def render_prediction_page():
             "Dependents": dependents,
             "Education": education,
             "Self_Employed": self_employed,
-            "ApplicantIncome": applicant_income,
-            "CoapplicantIncome": coapplicant_income,
-            "LoanAmount": loan_amount,
+            "ApplicantIncome": applicant_income / 1000,
+            "CoapplicantIncome": coapplicant_income / 1000,
+            "LoanAmount": loan_amount / 100000,
             "Loan_Amount_Term": loan_term,
             "Credit_History": credit_history,
             "Property_Area": property_area,
@@ -553,9 +627,9 @@ def render_prediction_page():
                     t("dependents", lang): dependents,
                     t("education", lang): education_options[education],
                     t("self_employed", lang): self_employed_options[self_employed],
-                    t("applicant_income", lang): f"${applicant_income:,}",
-                    t("coapplicant_income", lang): f"${coapplicant_income:,}",
-                    t("loan_amount", lang): f"{loan_amount}",
+                    t("applicant_income", lang): f"{int(applicant_income):,} UZS",
+                    t("coapplicant_income", lang): f"{int(coapplicant_income):,} UZS",
+                    t("loan_amount", lang): f"{int(loan_amount):,} UZS",
                     t("loan_term", lang): f"{loan_term}",
                     t("credit_history", lang): credit_options[credit_history],
                     t("property_area", lang): property_options[property_area],
@@ -598,10 +672,14 @@ def render_batch_page():
     
     # Expected columns
     with st.expander(t("expected_format", lang)):
+        # We show Translated (OriginalName) so users know what's in the CSV vs what it means
+        num_features_str = ", ".join([f"{t(f, lang)} ({f})" for f in config.NUMERIC_FEATURES])
+        cat_features_str = ", ".join([f"{t(f, lang)} ({f})" for f in config.CATEGORICAL_FEATURES])
+
         st.markdown(
             f"{t('columns_info', lang)}\n"
-            f"- **{t('numeric_cols', lang)}**: {', '.join(config.NUMERIC_FEATURES)}\n"
-            f"- **{t('categorical_cols', lang)}**: {', '.join(config.CATEGORICAL_FEATURES)}"
+            f"- **{t('numeric_cols', lang)}**: {num_features_str}\n"
+            f"- **{t('categorical_cols', lang)}**: {cat_features_str}"
         )
         
         # Sample data
@@ -691,7 +769,7 @@ def render_about_page():
     st.title(t("about_title", lang))
     
     st.markdown(f"""
-    ## Loan Approval Prediction
+    ## Intelligent Scoring
     
     {t("about_description", lang)}
     
@@ -706,9 +784,9 @@ def render_about_page():
     | {t("dependents", lang)} | 0, 1, 2, 3+ |
     | {t("education", lang)} | {t("graduate", lang)} / {t("not_graduate", lang)} |
     | {t("self_employed", lang)} | {t("yes", lang)} / {t("no", lang)} |
-    | {t("applicant_income", lang)} | $ |
-    | {t("coapplicant_income", lang)} | $ |
-    | {t("loan_amount", lang)} | (x1000) |
+    | {t("applicant_income", lang)} | UZS |
+    | {t("coapplicant_income", lang)} | UZS |
+    | {t("loan_amount", lang)} | UZS |
     | {t("loan_term", lang)} | {t("loan_term", lang)} |
     | {t("credit_history", lang)} | 1 = {t("credit_good", lang)}, 0 = {t("credit_bad", lang)} |
     | {t("property_area", lang)} | {t("urban", lang)} / {t("rural", lang)} / {t("semiurban", lang)} |
@@ -718,6 +796,9 @@ def render_about_page():
     {t("models_compared", lang)}
     - **Logistic Regression** ({t("baseline", lang)})
     - **Random Forest** ({t("strong", lang)})
+    - **Support Vector Machine (SVM)** ({t("svm_desc", lang)})
+    - **MLP Classifier** ({t("mlp_desc", lang)})
+    - **RBF Network** ({t("rbf_desc", lang)})
     
     {t("cv_selection", lang)}
     

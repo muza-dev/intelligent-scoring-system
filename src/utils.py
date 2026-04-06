@@ -1,5 +1,5 @@
 """
-Utility functions for the Loan Approval Prediction application.
+Utility functions for the Intelligent Scoring application.
 """
 import json
 import logging
@@ -38,56 +38,81 @@ def setup_logging(name: str = "loan_approval") -> logging.Logger:
     return logger
 
 
+def load_registry() -> dict:
+    """
+    Load the model registry from disk.
+    Returns an empty registry structure if file doesn't exist.
+    """
+    if not config.MODEL_REGISTRY_PATH.exists():
+        return {"active": None, "models": {}}
+    with open(config.MODEL_REGISTRY_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_registry(registry: dict) -> None:
+    """Persist the model registry to disk."""
+    config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    serializable = _make_serializable(registry)
+    with open(config.MODEL_REGISTRY_PATH, "w", encoding="utf-8") as f:
+        json.dump(serializable, f, indent=2, default=str)
+
+
+def get_active_model_key() -> str | None:
+    """Return the key of the currently active model (e.g. 'RandomForest')."""
+    return load_registry().get("active")
+
+
+def set_active_model(model_key: str) -> None:
+    """Set which model is active in the registry."""
+    registry = load_registry()
+    if model_key in registry.get("models", {}):
+        registry["active"] = model_key
+        save_registry(registry)
+
+
 def model_exists() -> bool:
     """
-    Check if a trained model exists on disk.
-    
-    Returns:
-        True if model file exists, False otherwise
+    Check if at least one trained model is available.
+    Checks registry first, falls back to legacy path.
     """
-    return config.MODEL_PATH.exists()
+    registry = load_registry()
+    for key in registry.get("models", {}):
+        path = config.MODEL_PATHS.get(key)
+        if path and path.exists():
+            return True
+    return config.MODEL_PATH.exists()  # legacy fallback
 
 
 def metadata_exists() -> bool:
-    """
-    Check if model metadata exists on disk.
-    
-    Returns:
-        True if metadata file exists, False otherwise
-    """
+    """Check if any model metadata is available."""
+    registry = load_registry()
+    if registry.get("models"):
+        return True
     return config.METADATA_PATH.exists()
 
 
-def load_metadata() -> dict[str, Any]:
+def load_metadata(model_key: str | None = None) -> dict:
     """
-    Load model metadata from JSON file.
-    
-    Returns:
-        Dictionary containing model metadata
-        
-    Raises:
-        FileNotFoundError: If metadata file doesn't exist
+    Load metadata for the given model key (or active model if None).
+    Falls back to legacy metadata.json if registry is empty.
     """
-    if not metadata_exists():
+    registry = load_registry()
+    key = model_key or registry.get("active")
+    if key and key in registry.get("models", {}):
+        return registry["models"][key]
+    # Legacy fallback
+    if not config.METADATA_PATH.exists():
         raise FileNotFoundError(f"Metadata file not found: {config.METADATA_PATH}")
-    
     with open(config.METADATA_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def save_metadata(metadata: dict[str, Any]) -> None:
+def save_metadata(metadata: dict) -> None:
     """
-    Save model metadata to JSON file.
-    
-    Args:
-        metadata: Dictionary containing model metadata
+    Save model metadata to the legacy JSON file (still used by train.py).
     """
-    # Ensure models directory exists
     config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
-    
-    # Convert any non-serializable types
     serializable = _make_serializable(metadata)
-    
     with open(config.METADATA_PATH, "w", encoding="utf-8") as f:
         json.dump(serializable, f, indent=2, default=str)
 
@@ -169,6 +194,14 @@ BASE_CSS = """
     border: 1px solid rgba(128, 128, 128, 0.15) !important;
     transition: all 0.3s ease !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+/* Kill the native radio input focus ring that bleeds outside the pill */
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] input[type="radio"] {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover {
@@ -181,6 +214,7 @@ BASE_CSS = """
     background: linear-gradient(90deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15)) !important;
     border: 1px solid rgba(14, 165, 233, 0.4) !important;
     box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1) !important;
+    outline: none !important;
 }
 
 /* Sidebar Control Labels */
@@ -490,6 +524,16 @@ header[data-testid="stHeader"] * {
     fill: rgba(255, 255, 255, 0.9) !important;
 }
 
+/* Header bar background – dark mode */
+header[data-testid="stHeader"],
+header[data-testid="stHeader"] > div,
+[data-testid="stToolbar"] {
+    background-color: rgba(2, 6, 23, 0.92) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
 /* Sidebar Radio/Navigation Text color */
 [data-testid="stSidebar"] .stRadio label p {
     color: rgba(255, 255, 255, 0.8) !important;
@@ -566,6 +610,42 @@ div[data-baseweb="select"] span {
     color: white !important;
 }
 
+/* Selectbox Dropdown Menu Fixes for Dark Mode */
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] > div,
+div[data-baseweb="popover"] > div > div,
+div[data-baseweb="popover"] ul,
+ul[data-baseweb="menu"],
+div[data-testid="stVirtualDropdown"] {
+    background-color: #0f172a !important;
+    background: #0f172a !important;
+}
+
+div[data-baseweb="popover"] li,
+div[data-testid="stVirtualDropdown"] li, 
+ul[data-baseweb="menu"] li, 
+li[role="option"] {
+    background-color: transparent !important;
+}
+
+div[data-baseweb="popover"] li:hover,
+div[data-testid="stVirtualDropdown"] li:hover, 
+ul[data-baseweb="menu"] li:hover, 
+li[role="option"]:hover,
+li[aria-selected="true"] {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+div[data-baseweb="popover"] span,
+div[data-baseweb="popover"] li span,
+div[data-testid="stVirtualDropdown"] li span, 
+ul[data-baseweb="menu"] li span, 
+li[role="option"] span,
+li[role="option"] div {
+    color: white !important;
+}
+
+
 /* Dataframes / Tables Dark Mode Fixes */
 [data-testid="stDataFrame"] { background-color: transparent !important; }
 [data-testid="stDataFrame"] th, [data-testid="stDataFrame"] td {
@@ -576,7 +656,14 @@ div[data-baseweb="select"] span {
 div[data-testid="stAlert"] {
     background-color: rgba(255, 255, 255, 0.05) !important;
     color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+div[data-testid="stAlert"] > div {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* File Uploader Dark Theme Outlines */
@@ -590,6 +677,36 @@ div[data-testid="stAlert"] {
     background-color: rgba(20, 30, 50, 0.6) !important;
     border: 1px dashed rgba(255, 255, 255, 0.4) !important;
 }
+
+/* JSON Viewer – Dark Theme */
+/* Reset the outer wrapper Streamlit adds (it already has its own box) */
+[data-testid="stJson"] {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+/* Style only the actual inner content box */
+[data-testid="stJson"] > div {
+    background-color: rgba(15, 25, 45, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+[data-testid="stJson"] > div > div {
+    background-color: transparent !important;
+    border: none !important;
+}
+[data-testid="stJson"] * {
+    color: rgba(255, 255, 255, 0.88) !important;
+    background-color: transparent !important;
+}
+/* Key colors inside JSON */
+[data-testid="stJson"] .string-value { color: #7dd3fc !important; }
+[data-testid="stJson"] .number-value { color: #a3e635 !important; }
+[data-testid="stJson"] .null-value    { color: #f87171 !important; }
+[data-testid="stJson"] .bool-value    { color: #fb923c !important; }
 """
 
 LIGHT_CSS = """
@@ -641,6 +758,19 @@ div[data-baseweb="input"] input::placeholder {
     color: rgba(15, 23, 42, 0.5) !important;
     -webkit-text-fill-color: rgba(15, 23, 42, 0.5) !important;
     opacity: 1 !important;
+}
+
+/* Number Input Controls - Light Mode Visibility */
+[data-testid="stNumberInputContainer"] button {
+    color: #0f172a !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+[data-testid="stNumberInputContainer"] button:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+[data-testid="stNumberInputContainer"] button svg {
+    fill: #0f172a !important;
+    stroke: #0f172a !important;
 }
 
 /* Buttons */
@@ -714,6 +844,26 @@ div[data-baseweb="select"] > div {
 div[data-baseweb="select"] span {
     color: #0f172a !important;
 }
+
+/* JSON Viewer – Light Theme */
+[data-testid="stJson"],
+[data-testid="stJson"] > div,
+[data-testid="stJson"] > div > div {
+    background-color: rgba(226, 232, 240, 0.6) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+[data-testid="stJson"] * {
+    color: #0f172a !important;
+    background-color: transparent !important;
+}
+/* Key colors inside JSON (light) */
+[data-testid="stJson"] .string-value { color: #0369a1 !important; }
+[data-testid="stJson"] .number-value { color: #4d7c0f !important; }
+[data-testid="stJson"] .null-value    { color: #b91c1c !important; }
+[data-testid="stJson"] .bool-value    { color: #c2410c !important; }
 """
 
 def inject_theme_css(theme_key, is_login=False):

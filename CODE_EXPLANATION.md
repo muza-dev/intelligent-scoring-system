@@ -15,7 +15,7 @@ This file is the **entry point** of the web application. It connects the user in
 - **Lines 27-32:** Import our own custom code modules from the `src` folder (like `eda`, `predict`, `i18n` for translations).
 
 ### **Page Configuration (Lines 39-44)**
-- `st.set_page_config(...)`: Sets the browser tab title to "Loan Approval Prediction", adds a bank icon (🏦), and sets the layout to "wide" (uses full screen).
+- `st.set_page_config(...)`: Sets the browser tab title to "Intelligent Scoring", adds a bank icon (🏦), and sets the layout to "wide" (uses full screen).
 
 ### **Sidebar Background (Lines 46-76)**
 - **What it does:** Shows the multicolor background picture in the sidebar.
@@ -74,10 +74,6 @@ This file is the **entry point** of the web application. It connects the user in
 - **`main()`**: The "boss" function.
 - It calls `render_sidebar()` to see which page you want.
 - Then use `if/elif` to run the correct function for that page (`render_train_page`, `render_eda_page`, etc.).
-### Main Execution (Lines 640-664)
-- **`main()`**: The "boss" function.
-- It calls `render_sidebar()` to see which page you want.
-- Then use `if/elif` to run the correct function for that page (`render_train_page`, `render_eda_page`, etc.).
 - **Line 665:** Standard Python pattern `if __name__ == "__main__": main()` ensures this only runs if you execute the file directly.
 
 ---
@@ -117,9 +113,12 @@ This file handles the visual analysis part of the app (the "Ma'lumotlar Tahlili"
 This is the "Brain" of the project where learning happens.
 
 ### **Pipeline Creation (Lines 18-38)**
-- **`create_models()`**: Defines two AI candidates:
+- **`create_models()`**: Defines five AI candidates:
     1.  **Logistic Regression:** Good, simple baseline model.
     2.  **Random Forest:** More complex, powerful "ensemble" of decision trees.
+    3.  **SVM:** Non-linear Support Vector Machine.
+    4.  **MLP:** Multi-layer neural network.
+    5.  **RBF Network:** Radial Basis Function classifier.
 - It uses a **Pipeline**. This is a wrapper that says: "First, clean the data (Preprocessor), THEN train the model (Classifier)". This ensures we always process data the exact same way.
 
 ### **Model Selection (Lines 41-86)**

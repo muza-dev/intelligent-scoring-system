@@ -1,1 +1,1 @@
-# Loan Approval Prediction - Source Package
+# Intelligent Scoring - Source Package

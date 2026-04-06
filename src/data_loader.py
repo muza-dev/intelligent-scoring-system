@@ -1,5 +1,5 @@
 """
-Data loading utilities for the Loan Approval Prediction application.
+Data loading utilities for the Intelligent Scoring application.
 """
 import pandas as pd
 from sklearn.model_selection import train_test_split

@@ -1,8 +1,8 @@
-# 📚 Loan Approval Prediction - Coursework Guide
+# 📚 Intelligent Scoring - Coursework Guide
 
 ### 1. Loyiha Haqida Umumiy Ma'lumot
 
-**Loyiha nomi:** Kredit Tasdiqlash Bashorati Ilovasi
+**Loyiha nomi:** Intelligent Scoring Ilovasi
 
 **Maqsad:** Bu kurs ishi mashinaviy o'rganish (Machine Learning) yordamida bank kredit arizalarini avtomatik tasdiqlash yoki rad etish bashoratini amalga oshiruvchi to'liq web-ilova yaratishga bag'ishlangan.
 
@@ -53,7 +53,7 @@ Biz Kaggle platformasidan "Loan Prediction Dataset" ni ishlatdik. Bu to'plamda ~
 
 #### 2.3 Model Tanlash
 
-Biz ikkita modelni solishtiramiz:
+Biz beshta modelni solishtiramiz:
 
 **1. Logistik Regressiya (Baseline):**
 - Oddiy va tushuntirishga oson
@@ -63,6 +63,18 @@ Biz ikkita modelni solishtiramiz:
 - Ko'plab qaror daraxtlaridan tuzilgan
 - Nochiziqli munosabatlarni topadi
 - Odatda aniqroq natija beradi
+
+**3. SVM (Support Vector Machine):**
+- Chiziqsiz klassifikator
+- Ma'lumotlarni qat'iy chegaralar bilan ajratishga harakat qiladi
+
+**4. MLP (Multi-Layer Perceptron):**
+- Ko'p qatlamli neyron tarmoq
+- Chuqur o'rganish arxitekturasi yordamida murakkab naqshlarni topadi
+
+**5. RBF Network:**
+- Radial bazis funksiyalari tarmog'i
+- Masofaga asoslangan klassifikatsiyani amalga oshiradi
 
 **Tanlash usuli:** 5-fold Cross-Validation
 - Ma'lumotlar 5 qismga bo'linadi

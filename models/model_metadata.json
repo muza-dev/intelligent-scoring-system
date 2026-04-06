@@ -1,6 +1,6 @@
 {
   "model_name": "LogisticRegression",
-  "training_date": "2026-04-01T09:34:30.425296",
+  "training_date": "2026-04-02T17:20:38.615151",
   "dataset_shape": {
     "train_samples": 491,
     "test_samples": 123,
@@ -41,29 +41,18 @@
     "categorical__Property_Area_Semiurban",
     "categorical__Property_Area_Urban"
   ],
+  "cv_mean_accuracy": 0.7983714698000413,
+  "cv_std_accuracy": 0.016295788434948617,
   "cv_results": {
-    "LogisticRegression": {
-      "mean_accuracy": 0.7983714698000413,
-      "std_accuracy": 0.016295788434948617,
-      "cv_scores": [
-        0.797979797979798,
-        0.8163265306122449,
-        0.8163265306122449,
-        0.7857142857142857,
-        0.7755102040816326
-      ]
-    },
-    "RandomForest": {
-      "mean_accuracy": 0.7963306534735106,
-      "std_accuracy": 0.00916398084749923,
-      "cv_scores": [
-        0.797979797979798,
-        0.8061224489795918,
-        0.8061224489795918,
-        0.7857142857142857,
-        0.7857142857142857
-      ]
-    }
+    "mean_accuracy": 0.7983714698000413,
+    "std_accuracy": 0.016295788434948617,
+    "cv_scores": [
+      0.797979797979798,
+      0.8163265306122449,
+      0.8163265306122449,
+      0.7857142857142857,
+      0.7755102040816326
+    ]
   },
   "test_accuracy": 0.8617886178861789,
   "random_state": 42
