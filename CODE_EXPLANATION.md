@@ -165,7 +165,7 @@ This file uses the saved model to guess "Yes" or "No" for new people.
 ## 5. Internationalization (`src/i18n.py`)
 
 This file handles the translations (Uzbek, Russian, English).
-
+ 
 ### **Data Structure (Lines 6-11)**
 - **`LANGUAGES`**: A simple dictionary mapping codes ("UZ") to names ("O'zbek").
 
