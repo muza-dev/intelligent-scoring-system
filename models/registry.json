@@ -3,7 +3,7 @@
   "models": {
     "LogisticRegression": {
       "model_name": "LogisticRegression",
-      "training_date": "2026-04-02T17:20:38.615151",
+      "training_date": "2026-04-13T17:20:09.457299",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -62,7 +62,7 @@
     },
     "RandomForest": {
       "model_name": "RandomForest",
-      "training_date": "2026-04-02T17:20:38.911818",
+      "training_date": "2026-04-13T17:20:09.775440",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -121,7 +121,7 @@
     },
     "SVM": {
       "model_name": "SVM",
-      "training_date": "2026-04-02T17:20:39.064054",
+      "training_date": "2026-04-13T17:20:09.996831",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -180,7 +180,7 @@
     },
     "MLP": {
       "model_name": "MLP",
-      "training_date": "2026-04-02T17:20:40.851663",
+      "training_date": "2026-04-13T17:20:11.863147",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -239,7 +239,7 @@
     },
     "RBFNetwork": {
       "model_name": "RBFNetwork",
-      "training_date": "2026-04-02T17:20:40.931935",
+      "training_date": "2026-04-13T17:20:11.940292",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
