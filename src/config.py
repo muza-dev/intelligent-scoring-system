@@ -29,6 +29,9 @@ MODEL_PATHS = {
     "SVM":                MODELS_DIR / "svm.joblib",
     "MLP":                MODELS_DIR / "mlp.joblib",
     "RBFNetwork":         MODELS_DIR / "rbf_network.joblib",
+    "EnsembleHard":       MODELS_DIR / "ensemble_hard.joblib",
+    "EnsembleSoft":       MODELS_DIR / "ensemble_model.joblib",
+    "EnsembleStack":      MODELS_DIR / "ensemble_stack.joblib",
 }
 
 # =============================================================================
@@ -69,46 +72,7 @@ TEST_SIZE = 0.2
 CV_FOLDS = 5
 
 # Hyperparameters
-LOGISTIC_REGRESSION_PARAMS = {
-    "max_iter": 1000,
-    "random_state": RANDOM_STATE,
-    "solver": "lbfgs",
-}
-
-RANDOM_FOREST_PARAMS = {
-    "n_estimators": 100,
-    "max_depth": 10,
-    "min_samples_split": 5,
-    "min_samples_leaf": 2,
-    "random_state": RANDOM_STATE,
-    "n_jobs": -1,
-}
-
-# SVM — Support Vector Machine (RBF kernel for nonlinear boundaries)
-SVM_PARAMS = {
-    "C": 1.0,
-    "kernel": "rbf",
-    "gamma": "scale",
-    "probability": True,   # needed for predict_proba
-    "random_state": RANDOM_STATE,
-}
-
-# MLP — Feedforward Neural Network (Multi-Layer Perceptron)
-MLP_PARAMS = {
-    "hidden_layer_sizes": (64, 32),
-    "activation": "relu",
-    "solver": "adam",
-    "max_iter": 500,
-    "random_state": RANDOM_STATE,
-}
-
-# RBF Network — approximated via SVM with explicit RBF feature map (Nystroem)
-# Uses sklearn's Nystroem kernel approximation + LinearSVC for efficiency
-RBF_NETWORK_PARAMS = {
-    "n_components": 100,       # number of RBF basis functions
-    "gamma": 0.1,
-    "random_state": RANDOM_STATE,
-}
+ENSEMBLE_SOFT_WEIGHTS = [0.218, 0.210, 0.209, 0.160, 0.203]
 
 # =============================================================================
 # UI Configuration

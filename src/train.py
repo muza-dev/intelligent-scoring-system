@@ -3,12 +3,13 @@ Model training module for the Intelligent Scoring application.
 """
 import joblib
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier, StackingClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.kernel_approximation import Nystroem
 from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.base import BaseEstimator, ClassifierMixin
 
 from . import config
 from .data_loader import load_and_split
@@ -16,6 +17,9 @@ from .preprocessing import create_preprocessor, get_feature_names_after_preproce
 from .utils import setup_logging, save_metadata, get_current_timestamp, _make_serializable
 
 logger = setup_logging(__name__)
+
+
+from .custom_models import RBFNetworkClassifier
 
 
 def create_models() -> dict[str, Pipeline]:
@@ -27,30 +31,66 @@ def create_models() -> dict[str, Pipeline]:
     """
     preprocessor = create_preprocessor()
     
+    # Exact base learners definition from requirements
+    base_learners = [
+        ('lr',  LogisticRegression(max_iter=1000, C=1.0)),
+        ('rf',  RandomForestClassifier(n_estimators=100, max_depth=10)),
+        ('svm', SVC(probability=True, kernel='rbf')),
+        ('mlp', MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=500)),
+        ('rbf', RBFNetworkClassifier(gamma='scale'))
+    ]
+    
+    ensemble_hard = VotingClassifier(
+        estimators=base_learners,
+        voting='hard'
+    )
+    
+    ensemble_soft = VotingClassifier(
+        estimators=base_learners,
+        voting='soft',
+        weights=config.ENSEMBLE_SOFT_WEIGHTS
+    )
+
+    ensemble_stack = StackingClassifier(
+        estimators=base_learners,
+        final_estimator=LogisticRegression(),
+        cv=5
+    )
+    
+    # Re-use pipelines to ensure preprocessor runs before everything
+    # We provide the base models in pipelines as well to evaluate their individual performance
     models = {
         "LogisticRegression": Pipeline([
-            ("preprocessor", preprocessor),
-            ("classifier", LogisticRegression(**config.LOGISTIC_REGRESSION_PARAMS)),
+            ("preprocessor", create_preprocessor()),
+            ("classifier", LogisticRegression(max_iter=1000, C=1.0)),
         ]),
         "RandomForest": Pipeline([
             ("preprocessor", create_preprocessor()),
-            ("classifier", RandomForestClassifier(**config.RANDOM_FOREST_PARAMS)),
+            ("classifier", RandomForestClassifier(n_estimators=100, max_depth=10)),
         ]),
         "SVM": Pipeline([
             ("preprocessor", create_preprocessor()),
-            ("classifier", SVC(**config.SVM_PARAMS)),
+            ("classifier", SVC(probability=True, kernel='rbf')),
         ]),
         "MLP": Pipeline([
             ("preprocessor", create_preprocessor()),
-            ("classifier", MLPClassifier(**config.MLP_PARAMS)),
+            ("classifier", MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=500)),
         ]),
-        # RBF Network: Nystroem maps features into RBF kernel space,
-        # then Logistic Regression learns linear boundaries in that space.
-        # This is the standard sklearn approximation of an RBF Network.
         "RBFNetwork": Pipeline([
             ("preprocessor", create_preprocessor()),
-            ("rbf_sampler", Nystroem(**config.RBF_NETWORK_PARAMS)),
-            ("classifier", LogisticRegression(max_iter=1000, random_state=config.RANDOM_STATE)),
+            ("classifier", RBFNetworkClassifier(gamma='scale')),
+        ]),
+        "EnsembleHard": Pipeline([
+            ("preprocessor", create_preprocessor()),
+            ("classifier", ensemble_hard),
+        ]),
+        "EnsembleSoft": Pipeline([
+            ("preprocessor", create_preprocessor()),
+            ("classifier", ensemble_soft),
+        ]),
+        "EnsembleStack": Pipeline([
+            ("preprocessor", create_preprocessor()),
+            ("classifier", ensemble_stack),
         ]),
     }
     

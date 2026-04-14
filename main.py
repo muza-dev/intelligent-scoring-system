@@ -522,8 +522,8 @@ def render_prediction_page():
         0.0: t("credit_bad", lang)
     }
     
-    # Input form
-    with st.form("prediction_form"):
+    # Input form without strict batching (to allow interactive auto-calculation)
+    with st.container():
         st.subheader(t("applicant_info", lang))
         
         col1, col2, col3 = st.columns(3)
@@ -572,15 +572,23 @@ def render_prediction_page():
                 value=15000000,
                 step=500000
             )
+            import math
+            total_income = applicant_income + coapplicant_income
+            if total_income > 0:
+                affordable_monthly = total_income * 0.35
+                min_term = max(1, math.ceil(loan_amount / affordable_monthly))
+            else:
+                min_term = 120
+                
             loan_term = st.number_input(
-                t("loan_term", lang),
-                min_value=1,
+                t("loan_term", lang) + t("loan_term_min", lang),
+                min_value=min_term,
                 max_value=600,
-                value=1,
-                step=1
+                step=1,
+                help=t("loan_term_help", lang)
             )
         
-        submit = st.form_submit_button(t("predict_button", lang), type="primary", use_container_width=True)
+        submit = st.button(t("predict_button", lang), type="primary", use_container_width=True)
     
     if submit:
         # Build input data
@@ -600,7 +608,7 @@ def render_prediction_page():
         
         try:
             model = get_model()
-            prediction, probability, label = predict_single(input_data, model)
+            prediction, probability, label, confidence_level = predict_single(input_data, model)
             
             st.markdown("---")
             st.subheader(t("prediction_result", lang))
@@ -616,6 +624,15 @@ def render_prediction_page():
                     st.metric(t("approval_probability", lang), f"{probability:.1%}")
                 
                 st.caption(t("probability_note", lang))
+                
+                # Human in the loop flag
+                st.markdown("---")
+                if "Edge Case" in confidence_level:
+                    st.warning("⚠️ **Edge Case - Human Review Required**")
+                    st.caption("Ensemble models disagree on this application. Please route to a human expert.")
+                elif confidence_level == "High Confidence":
+                    st.info("🎯 **High Confidence Decision**")
+                    st.caption("All ensemble models unanimously agree.")
             
             with result_col2:
                 st.markdown(f"**{t('input_summary', lang)}**")
@@ -739,6 +756,11 @@ def render_batch_page():
                 with summary_col2:
                     st.metric(t("average_probability", lang), f"{result_df['Probability'].mean():.1%}")
                     st.metric(t("total_applications", lang), len(result_df))
+                    
+                    if "Confidence Level" in result_df.columns:
+                        edge_cases = result_df["Confidence Level"].str.contains("Edge Case").sum()
+                        if edge_cases > 0:
+                            st.warning(f"⚠️ **{edge_cases}** Edge Cases detected. Human review required for these.")
                 
                 # Results preview
                 st.subheader(t("predictions_header", lang))

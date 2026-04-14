@@ -1,9 +1,9 @@
 {
-  "active": "LogisticRegression",
+  "active": "EnsembleHard",
   "models": {
     "LogisticRegression": {
       "model_name": "LogisticRegression",
-      "training_date": "2026-04-13T17:20:09.457299",
+      "training_date": "2026-04-14T11:43:10.033558",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -62,7 +62,7 @@
     },
     "RandomForest": {
       "model_name": "RandomForest",
-      "training_date": "2026-04-13T17:20:09.775440",
+      "training_date": "2026-04-14T11:43:10.290379",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -103,16 +103,16 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7963306534735106,
-      "cv_std_accuracy": 0.00916398084749923,
+      "cv_mean_accuracy": 0.78008658008658,
+      "cv_std_accuracy": 0.022394823009023547,
       "cv_results": {
-        "mean_accuracy": 0.7963306534735106,
-        "std_accuracy": 0.00916398084749923,
+        "mean_accuracy": 0.78008658008658,
+        "std_accuracy": 0.022394823009023547,
         "cv_scores": [
-          0.797979797979798,
-          0.8061224489795918,
-          0.8061224489795918,
+          0.7575757575757576,
+          0.8163265306122449,
           0.7857142857142857,
+          0.7551020408163265,
           0.7857142857142857
         ]
       },
@@ -121,7 +121,7 @@
     },
     "SVM": {
       "model_name": "SVM",
-      "training_date": "2026-04-13T17:20:09.996831",
+      "training_date": "2026-04-14T11:43:10.430546",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -180,7 +180,7 @@
     },
     "MLP": {
       "model_name": "MLP",
-      "training_date": "2026-04-13T17:20:11.863147",
+      "training_date": "2026-04-14T11:43:12.231420",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -221,25 +221,25 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7129251700680272,
-      "cv_std_accuracy": 0.02874904300559927,
+      "cv_mean_accuracy": 0.7067821067821068,
+      "cv_std_accuracy": 0.03316401771175951,
       "cv_results": {
-        "mean_accuracy": 0.7129251700680272,
-        "std_accuracy": 0.02874904300559927,
+        "mean_accuracy": 0.7067821067821068,
+        "std_accuracy": 0.03316401771175951,
         "cv_scores": [
-          0.6666666666666666,
-          0.7448979591836735,
-          0.7346938775510204,
+          0.6767676767676768,
+          0.7551020408163265,
           0.7244897959183674,
-          0.6938775510204082
+          0.7142857142857143,
+          0.6632653061224489
         ]
       },
-      "test_accuracy": 0.7642276422764228,
+      "test_accuracy": 0.7398373983739838,
       "random_state": 42
     },
     "RBFNetwork": {
       "model_name": "RBFNetwork",
-      "training_date": "2026-04-13T17:20:11.940292",
+      "training_date": "2026-04-14T11:43:12.285619",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -280,20 +280,197 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7963512677798391,
-      "cv_std_accuracy": 0.01803079062930078,
+      "cv_mean_accuracy": 0.79428983714698,
+      "cv_std_accuracy": 0.0119987659111605,
       "cv_results": {
-        "mean_accuracy": 0.7963512677798391,
-        "std_accuracy": 0.01803079062930078,
+        "mean_accuracy": 0.79428983714698,
+        "std_accuracy": 0.0119987659111605,
         "cv_scores": [
-          0.7878787878787878,
+          0.797979797979798,
           0.8061224489795918,
-          0.826530612244898,
+          0.8061224489795918,
           0.7857142857142857,
           0.7755102040816326
         ]
       },
       "test_accuracy": 0.8536585365853658,
+      "random_state": 42
+    },
+    "EnsembleHard": {
+      "model_name": "EnsembleHard",
+      "training_date": "2026-04-14T11:43:14.602160",
+      "dataset_shape": {
+        "train_samples": 491,
+        "test_samples": 123,
+        "n_features": 11
+      },
+      "feature_columns": [
+        "ApplicantIncome",
+        "CoapplicantIncome",
+        "LoanAmount",
+        "Loan_Amount_Term",
+        "Credit_History",
+        "Gender",
+        "Married",
+        "Dependents",
+        "Education",
+        "Self_Employed",
+        "Property_Area"
+      ],
+      "feature_names_transformed": [
+        "numeric__ApplicantIncome",
+        "numeric__CoapplicantIncome",
+        "numeric__LoanAmount",
+        "numeric__Loan_Amount_Term",
+        "numeric__Credit_History",
+        "categorical__Gender_Female",
+        "categorical__Gender_Male",
+        "categorical__Married_No",
+        "categorical__Married_Yes",
+        "categorical__Dependents_0",
+        "categorical__Dependents_1",
+        "categorical__Dependents_2",
+        "categorical__Dependents_3+",
+        "categorical__Education_Graduate",
+        "categorical__Education_Not Graduate",
+        "categorical__Self_Employed_No",
+        "categorical__Self_Employed_Yes",
+        "categorical__Property_Area_Rural",
+        "categorical__Property_Area_Semiurban",
+        "categorical__Property_Area_Urban"
+      ],
+      "cv_mean_accuracy": 0.7983920841063699,
+      "cv_std_accuracy": 0.019535903052485308,
+      "cv_results": {
+        "mean_accuracy": 0.7983920841063699,
+        "std_accuracy": 0.019535903052485308,
+        "cv_scores": [
+          0.7878787878787878,
+          0.826530612244898,
+          0.8163265306122449,
+          0.7857142857142857,
+          0.7755102040816326
+        ]
+      },
+      "test_accuracy": 0.8536585365853658,
+      "random_state": 42
+    },
+    "EnsembleSoft": {
+      "model_name": "EnsembleSoft",
+      "training_date": "2026-04-14T11:43:16.421470",
+      "dataset_shape": {
+        "train_samples": 491,
+        "test_samples": 123,
+        "n_features": 11
+      },
+      "feature_columns": [
+        "ApplicantIncome",
+        "CoapplicantIncome",
+        "LoanAmount",
+        "Loan_Amount_Term",
+        "Credit_History",
+        "Gender",
+        "Married",
+        "Dependents",
+        "Education",
+        "Self_Employed",
+        "Property_Area"
+      ],
+      "feature_names_transformed": [
+        "numeric__ApplicantIncome",
+        "numeric__CoapplicantIncome",
+        "numeric__LoanAmount",
+        "numeric__Loan_Amount_Term",
+        "numeric__Credit_History",
+        "categorical__Gender_Female",
+        "categorical__Gender_Male",
+        "categorical__Married_No",
+        "categorical__Married_Yes",
+        "categorical__Dependents_0",
+        "categorical__Dependents_1",
+        "categorical__Dependents_2",
+        "categorical__Dependents_3+",
+        "categorical__Education_Graduate",
+        "categorical__Education_Not Graduate",
+        "categorical__Self_Employed_No",
+        "categorical__Self_Employed_Yes",
+        "categorical__Property_Area_Rural",
+        "categorical__Property_Area_Semiurban",
+        "categorical__Property_Area_Urban"
+      ],
+      "cv_mean_accuracy": 0.7841269841269841,
+      "cv_std_accuracy": 0.011620070725912894,
+      "cv_results": {
+        "mean_accuracy": 0.7841269841269841,
+        "std_accuracy": 0.011620070725912894,
+        "cv_scores": [
+          0.7777777777777778,
+          0.7857142857142857,
+          0.8061224489795918,
+          0.7755102040816326,
+          0.7755102040816326
+        ]
+      },
+      "test_accuracy": 0.8536585365853658,
+      "random_state": 42
+    },
+    "EnsembleStack": {
+      "model_name": "EnsembleStack",
+      "training_date": "2026-04-14T11:43:28.244267",
+      "dataset_shape": {
+        "train_samples": 491,
+        "test_samples": 123,
+        "n_features": 11
+      },
+      "feature_columns": [
+        "ApplicantIncome",
+        "CoapplicantIncome",
+        "LoanAmount",
+        "Loan_Amount_Term",
+        "Credit_History",
+        "Gender",
+        "Married",
+        "Dependents",
+        "Education",
+        "Self_Employed",
+        "Property_Area"
+      ],
+      "feature_names_transformed": [
+        "numeric__ApplicantIncome",
+        "numeric__CoapplicantIncome",
+        "numeric__LoanAmount",
+        "numeric__Loan_Amount_Term",
+        "numeric__Credit_History",
+        "categorical__Gender_Female",
+        "categorical__Gender_Male",
+        "categorical__Married_No",
+        "categorical__Married_Yes",
+        "categorical__Dependents_0",
+        "categorical__Dependents_1",
+        "categorical__Dependents_2",
+        "categorical__Dependents_3+",
+        "categorical__Education_Graduate",
+        "categorical__Education_Not Graduate",
+        "categorical__Self_Employed_No",
+        "categorical__Self_Employed_Yes",
+        "categorical__Property_Area_Rural",
+        "categorical__Property_Area_Semiurban",
+        "categorical__Property_Area_Urban"
+      ],
+      "cv_mean_accuracy": 0.7963512677798392,
+      "cv_std_accuracy": 0.016836273279183304,
+      "cv_results": {
+        "mean_accuracy": 0.7963512677798392,
+        "std_accuracy": 0.016836273279183304,
+        "cv_scores": [
+          0.7878787878787878,
+          0.8163265306122449,
+          0.8163265306122449,
+          0.7857142857142857,
+          0.7755102040816326
+        ]
+      },
+      "test_accuracy": 0.8617886178861789,
       "random_state": 42
     }
   }

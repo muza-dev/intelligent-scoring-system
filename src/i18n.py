@@ -414,6 +414,16 @@ TRANSLATIONS = {
         "RU": "Срок Кредита (месяцы)",
         "EN": "Loan Term (months)",
     },
+    "loan_term_min": {
+        "UZ": " (Min Oylar)",
+        "RU": " (Мин. Месяцы)",
+        "EN": " (Min Months)",
+    },
+    "loan_term_help": {
+        "UZ": "Kreditning boshlanish (eng kam) muddati — maoshingizdan kelib chiqib eng kami bilan necha oyga olish mumkinligi avtomatik belgilandi.",
+        "RU": "Начальный срок кредита — исходя из вашего дохода автоматически определен минимальный срок, на который можно получить кредит.",
+        "EN": "Starting loan term — based on your income, the minimum possible term to take the loan has been automatically determined.",
+    },
     "predict_button": {
         "UZ": "🔍 Bashorat",
         "RU": "🔍 Прогноз",

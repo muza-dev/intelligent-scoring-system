@@ -44,7 +44,7 @@ def load_model(model_key: str | None = None):
     return joblib.load(config.MODEL_PATH)
 
 
-def predict_single(input_data: dict, model=None) -> tuple[int, float, str]:
+def predict_single(input_data: dict, model=None) -> tuple[int, float, str, str]:
     """
     Make a prediction for a single applicant.
     
@@ -66,13 +66,34 @@ def predict_single(input_data: dict, model=None) -> tuple[int, float, str]:
     
     # Make prediction
     prediction = model.predict(df)[0]
-    probability = model.predict_proba(df)[0, 1]
+    probability = model.predict_proba(df)[0, 1] if hasattr(model, "predict_proba") else float(prediction)
     
     label = "Approved" if prediction == 1 else "Rejected"
     
-    logger.info(f"Prediction: {label} (probability: {probability:.4f})")
+    confidence_level = "Standard"
     
-    return int(prediction), float(probability), label
+    # Human-in-the-Loop Disagreement Detection
+    if hasattr(model, "named_steps") and "classifier" in model.named_steps and "preprocessor" in model.named_steps:
+        clf = model.named_steps["classifier"]
+        preprocessor = model.named_steps["preprocessor"]
+        from sklearn.ensemble import VotingClassifier, StackingClassifier
+        
+        if isinstance(clf, (VotingClassifier, StackingClassifier)):
+            try:
+                X_trans = preprocessor.transform(df)
+                base_preds = [est.predict(X_trans)[0] for est in clf.estimators_]
+                num_approve = sum(1 for p in base_preds if p == 1)
+                
+                if num_approve == len(base_preds) or num_approve == 0:
+                    confidence_level = "High Confidence"
+                else:
+                    confidence_level = "Edge Case / Manual Review Required"
+            except Exception as e:
+                logger.warning(f"Could not compute confidence bounds: {e}")
+
+    logger.info(f"Prediction: {label} (probability: {probability:.4f}, confidence: {confidence_level})")
+    
+    return int(prediction), float(probability), label, confidence_level
 
 
 def predict_batch(df: pd.DataFrame, model=None) -> pd.DataFrame:
@@ -97,16 +118,40 @@ def predict_batch(df: pd.DataFrame, model=None) -> pd.DataFrame:
     
     # Make predictions
     predictions = model.predict(feature_df)
-    probabilities = model.predict_proba(feature_df)[:, 1]
+    probabilities = model.predict_proba(feature_df)[:, 1] if hasattr(model, "predict_proba") else predictions
     
     # Add prediction columns
     result_df["Prediction"] = predictions
     result_df["Probability"] = probabilities
     result_df["Status"] = np.where(predictions == 1, "Approved", "Rejected")
     
+    # Human-in-the-Loop Disagreement Detection
+    confidence_levels = ["Standard"] * len(df)
+    if hasattr(model, "named_steps") and "classifier" in model.named_steps and "preprocessor" in model.named_steps:
+        clf = model.named_steps["classifier"]
+        preprocessor = model.named_steps["preprocessor"]
+        from sklearn.ensemble import VotingClassifier, StackingClassifier
+        
+        if isinstance(clf, (VotingClassifier, StackingClassifier)):
+            try:
+                X_trans = preprocessor.transform(feature_df)
+                all_base_preds = np.array([est.predict(X_trans) for est in clf.estimators_]).T
+                
+                for idx, preds in enumerate(all_base_preds):
+                    num_approve = np.sum(preds == 1)
+                    if num_approve == len(preds) or num_approve == 0:
+                        confidence_levels[idx] = "High Confidence"
+                    else:
+                        confidence_levels[idx] = "Edge Case / Manual Review Required"
+            except Exception as e:
+                logger.warning(f"Could not compute confidence bounds for batch: {e}")
+                
+    result_df["Confidence Level"] = confidence_levels
+    
     logger.info(f"Batch prediction complete: {len(df)} samples")
     logger.info(f"  Approved: {sum(predictions)} ({sum(predictions)/len(df)*100:.1f}%)")
     logger.info(f"  Rejected: {len(predictions) - sum(predictions)} ({(len(predictions) - sum(predictions))/len(df)*100:.1f}%)")
+    logger.info(f"  Edge Cases: {sum(1 for c in confidence_levels if 'Edge' in c)}")
     
     return result_df
 
@@ -142,10 +187,11 @@ def smoke_test():
         logger.info(f"  {key}: {value}")
     
     try:
-        prediction, probability, label = predict_single(test_input)
+        prediction, probability, label, confidence = predict_single(test_input)
         
         logger.info(f"\nResult: {label}")
         logger.info(f"Probability of approval: {probability:.4f}")
+        logger.info(f"Confidence Level: {confidence}")
         logger.info("\n✓ Smoke test PASSED!")
         
         return True
