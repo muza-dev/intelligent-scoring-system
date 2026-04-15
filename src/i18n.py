@@ -786,6 +786,21 @@ TRANSLATIONS = {
         "RU": "Вся предобработка выполняется внутри Pipeline sklearn для предотвращения утечки данных",
         "EN": "All preprocessing is done inside a sklearn Pipeline to prevent data leakage",
     },
+    "about_ensemble_title": {
+        "UZ": "Ansambl va Avtomatlashtirish",
+        "RU": "Ансамбль и Автоматизация",
+        "EN": "Ensemble & Automation",
+    },
+    "about_dynamic_loan": {
+        "UZ": "**DTI asosi bilan Dinamik Muddat:** Kredit muddati endi mijoz daromadining 35% qoidasi asosida avtomatik hisoblanadi. Bu iqtisodiy qaltis muddatlarning oldini oladi.",
+        "RU": "**Динамический Срок на базе DTI:** Срок кредита теперь автоматически рассчитывается на основе правила 35% от дохода. Это предотвращает выбор экономически рискованных сроков.",
+        "EN": "**DTI-based Dynamic Term:** Loan terms are now dynamically calculated based on a 35% debt-to-income limit, preventing financially impossible short-term loans.",
+    },
+    "about_hitl": {
+        "UZ": "**Human-in-the-Loop (HITL):** Turli bazaviy modellar bir-biriga qarama-qarshi xulosa bildirsa, tizim buni sezib shubhali (Edge Case) holat sifatida belgicha taqadi va uni ko'rib chiqishga taklif etadi.",
+        "RU": "**Человек-в-цикле (HITL):** Если базовые модели кардинально расходятся во мнениях, система помечает это как 'Edge Case', требующий ручной проверки.",
+        "EN": "**Human-in-the-Loop (HITL):** If base models strongly disagree, the system flags the application as an 'Edge Case' requiring manual review.",
+    },
     "limitations_title": {
         "UZ": "⚠️ Cheklovlar",
         "RU": "⚠️ Ограничения",
@@ -1036,6 +1051,56 @@ TRANSLATIONS = {
         "UZ": "To'liq Ism",
         "RU": "Полное Имя",
         "EN": "Full Name",
+    },
+    "phone_label": {
+        "UZ": "Telefon Raqami",
+        "RU": "Номер Телефона",
+        "EN": "Phone Number",
+    },
+    "email_label": {
+        "UZ": "Elektron Pochta",
+        "RU": "Электронная Почта",
+        "EN": "Email",
+    },
+    "national_id_label": {
+        "UZ": "Pasport Raqami / JSHSHIR",
+        "RU": "Серия Паспорта / ПИНФЛ",
+        "EN": "National ID / Passport No",
+    },
+    "address_label": {
+        "UZ": "Manzil",
+        "RU": "Адрес",
+        "EN": "Address",
+    },
+    "income_label": {
+        "UZ": "Oylik Daromad",
+        "RU": "Ежемесячный Доход",
+        "EN": "Monthly Income",
+    },
+    "username_label": {
+        "UZ": "Foydalanuvchi Nomi",
+        "RU": "Имя пользователя",
+        "EN": "Username",
+    },
+    "password_label": {
+        "UZ": "Parol",
+        "RU": "Пароль",
+        "EN": "Password",
+    },
+    "confirm_password_label": {
+        "UZ": "Parolni Tasdiqlang",
+        "RU": "Подтвердите Пароль",
+        "EN": "Confirm Password",
+    },
+    "fill_all_fields_err": {
+        "UZ": "Iltimos, barcha maydonlarni to'ldiring.",
+        "RU": "Пожалуйста, заполните все поля.",
+        "EN": "Please fill in all fields.",
+    },
+    "passwords_mismatch_err": {
+        "UZ": "Parollar mos kelmadi.",
+        "RU": "Пароли не совпадают.",
+        "EN": "Passwords do not match.",
     },
     "created_at": {
         "UZ": "Ro'yxatdan o'tgan sana",

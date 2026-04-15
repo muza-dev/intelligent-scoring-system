@@ -127,16 +127,16 @@ Haqiqiy  Rad      TN          FP
 #### 3.2 Yakka Bashorat (Single Prediction)
 
 **Vazifasi:**
-- Bitta ariza beruvchi uchun kredit bashorati
-- Forma orqali ma'lumotlarni kiritish
-- Tasdiqlash/Rad etish natijasi
-- Ehtimollik foizi
-- Qaysi omillar muhim ekanligi
+- Bitta ariza beruvchi uchun kredit bashorati.
+- **Jonli Form (Live Reactivity):** Oylik daromad va Kredit miqdori kiritilayotganda, moliyaviy barqarorlik (35% DTI qoidasi) asosida *Kredit muddati* qancha bo'lishi kerakligi orqa fonda matematik formula tarzida avtomatik hisoblanib boriladi (Tizim insonning oylik yashash xarajatlariga 65%ini ajratadi va eng qisqa qarz yopilish muddatini topadi).
+- **Human-in-the-Loop (HITL):** Ansambl modelidagi 5 ta bazaviy model qarorlari yakka holda dekompozitsiya qilinib tekshiriladi, agar ular juda ikkilanib qarama-qarshi xulosa bildirsa "Chekka Holat / Manuallik Dasturiga Olish kerak" (Edge Case) deya bank xodimiga maxsus belgi chiqaradi.
+- Tasdiqlash/Rad etish natijasi va Ehtimollik foizi.
+- Qaysi omillar muhim ekanligi (Feature Importance).
 
 **Qanday ishlatiladi:**
-1. Barcha maydonlarni to'ldiring
-2. "Bashorat" tugmasini bosing
-3. Natijani va tushuntirishni ko'ring
+1. Kerakli maydonlarni to'ldiring. Kredit muddatining *kalkulyatorlangan* pastki chegarasidan o'ta olmaysiz — iqtisodiy qoidaga asosan uni faqat uzaytirish mumkin bo'ladi.
+2. "Bashorat" tugmasini bosing.
+3. Natijani, bashorat ishonchini va qarorning izohini ko'ring.
 
 #### 3.3 Ommaviy Bashorat (Batch Prediction)
 

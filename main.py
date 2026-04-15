@@ -830,6 +830,11 @@ def render_about_page():
     - **{t("categorical_cols", lang)}**: {t("preprocessing_categorical", lang)}
     - {t("preprocessing_note", lang)}
     
+    ### {t("about_ensemble_title", lang)}
+    
+    - {t("about_dynamic_loan", lang)}
+    - {t("about_hitl", lang)}
+
     ---
     
     ### {t("limitations_title", lang)}
@@ -917,26 +922,26 @@ def render_user_management_page():
         col1, col2 = st.columns(2)
         with col1:
             new_full_name    = st.text_input(t("full_name", lang))
-            new_phone        = st.text_input("Phone Number")
-            new_email        = st.text_input("Email")
-            new_national_id  = st.text_input("National ID / Passport No")
+            new_phone        = st.text_input(t("phone_label", lang))
+            new_email        = st.text_input(t("email_label", lang))
         with col2:
-            new_address      = st.text_input("Address")
-            new_income       = st.text_input("Monthly Income")
-            new_uname        = st.text_input("Username")
+            new_address      = st.text_input(t("address_label", lang))
+            new_uname        = st.text_input(t("username_label", lang))
+            new_national_id  = st.text_input(t("national_id_label", lang))
 
-        new_pass  = st.text_input("Password",         type="password")
-        new_pass2 = st.text_input("Confirm Password", type="password")
+        new_pass  = st.text_input(t("password_label", lang),         type="password")
+        new_pass2 = st.text_input(t("confirm_password_label", lang), type="password")
 
         submitted = st.form_submit_button(t("add_staff_btn", lang), type="primary", use_container_width=True)
 
         if submitted:
+            new_income = "0"
             required = [new_full_name, new_phone, new_email, new_national_id,
-                        new_address, new_income, new_uname, new_pass, new_pass2]
+                        new_address, new_uname, new_pass, new_pass2]
             if not all(required):
-                st.error("Please fill in all fields.")
+                st.error(t("fill_all_fields_err", lang))
             elif new_pass != new_pass2:
-                st.error("Passwords do not match.")
+                st.error(t("passwords_mismatch_err", lang))
             else:
                 hashed = hash_password(new_pass)
                 ok = add_user(

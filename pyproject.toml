@@ -14,5 +14,13 @@ dependencies = [
     "joblib>=1.3.0",
 ]
 
+[tool.pyright]
+pythonVersion = "3.13"
+venvPath = "."
+venv = ".venv"
+executionEnvironments = [
+    { root = ".", extraPaths = ["."] }
+]
+
 [tool.uv]
 dev-dependencies = []

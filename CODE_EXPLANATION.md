@@ -58,17 +58,17 @@ This file is the **entry point** of the web application. It connects the user in
 ### **Prediction Logic (Lines 245-364)**
 *Note: This starts later in the file around line 260*
 - **`render_prediction_page()`**: Runs when you select "Single Prediction".
-- **Step 1:** Checks if a model exists. If no model, warns you to go train one first.
-- **Step 2:** Creates input forms for the user:
-    - **Number Inputs:** Income, Loan Amount, Term.
+- **Step 1:** Checks if a model exists in the `registry.json`. If no model is active, warns you to go train one first.
+- **Step 2:** Creates interactive input panels for the user:
+    - **Interactive Math (Live Reactivity):** It calculates `Loan_Amount_Term` dynamically using a 35% DTI (Debt-to-Income) logic. The app reads `ApplicantIncome` + `CoapplicantIncome`, allocates 35% to the loan, and calculates the minimum playable months dynamically. Users can't select fewer months than this mathematical baseline.
+    - **Number Inputs:** Income, Loan Amount.
     - **Select Boxes (Dropdowns):** Gender, Married, Education, Property Area, etc.
 - **Step 3:** "Predict" button.
-- **Step 4:** Collects all inputs into a dictionary (`input_data`).
-- **Step 5:** Calls `predict_single()` which asks the model for a result.
+- **Step 4:** Collects all inputs into a dictionary (`input_data`), enforcing the boundaries set above.
+- **Step 5:** Calls `predict_single()` which asks the active Ensemble model for a result. Under the hood, it breaks down the Ensemble model to see what ALL sub-models individually think.
 - **Step 6:** Shows the result:
-    - Green box if Approved.
-    - Red box if Rejected.
-    - Shows a probability bar (e.g., "85% certainty").
+    - Green box if Approved. Red box if Rejected. Shows a probability bar.
+    - **Confidence Badges (Human-In-The-Loop):** By tracking model consensus, if sub-models disagree deeply, it raises a yellow "Edge Case / Manual Review Required" flag for human experts to review manually. Otherwise, it stamps "High Confidence".
 
 ### **Main Execution (Lines 640-664)**
 - **`main()`**: The "boss" function.
