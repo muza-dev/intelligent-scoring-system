@@ -140,7 +140,14 @@ def evaluate_model(model=None):
     
     # Predictions
     y_pred = model.predict(X_test)
-    y_proba = model.predict_proba(X_test)[:, 1]
+    
+    # Some models (e.g. EnsembleHard with voting='hard') don't support predict_proba
+    y_proba = None
+    if hasattr(model, "predict_proba"):
+        try:
+            y_proba = model.predict_proba(X_test)[:, 1]
+        except AttributeError:
+            logger.warning("Model does not support predict_proba, skipping probability metrics.")
     
     # Calculate metrics
     metrics = calculate_metrics(y_test, y_pred, y_proba)
@@ -164,7 +171,9 @@ def evaluate_model(model=None):
     
     # Create plots
     cm_fig = plot_confusion_matrix(y_test, y_pred)
-    roc_fig = plot_roc_curve(y_test, y_proba)
+    roc_fig = None
+    if y_proba is not None:
+        roc_fig = plot_roc_curve(y_test, y_proba)
     
     return {
         "metrics": metrics,

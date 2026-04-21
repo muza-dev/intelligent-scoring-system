@@ -215,10 +215,35 @@ TRANSLATIONS = {
         "RU": "Ошибка обучения: ",
         "EN": "Training failed: ",
     },
+    "edge_cases_alert": {
+        "UZ": "⚠️ **{count}** ta shubhali holat (Edge Case) aniqlandi. Inson nazorati talab etiladi.",
+        "RU": "⚠️ Обнаружено **{count}** пограничных случаев (Edge Cases). Требуется проверка человеком.",
+        "EN": "⚠️ **{count}** Edge Cases detected. Human review required for these.",
+    },
     "model_type": {
         "UZ": "Model Turi",
         "RU": "Тип Модели",
         "EN": "Model Type",
+    },
+    "edge_case_single_alert": {
+        "UZ": "⚠️ **Shubhali holat - Inson nazorati talab etiladi**",
+        "RU": "⚠️ **Пограничный случай - Требуется проверка человеком**",
+        "EN": "⚠️ **Edge Case - Human Review Required**",
+    },
+    "edge_case_single_caption": {
+        "UZ": "Ansambl modellari ushbu ariza bo'yicha turli xulosalar bergan. Iltimos, mutaxassisga yo'naltiring.",
+        "RU": "Ансамблевые модели разошлись во мнениях. Пожалуйста, передайте эксперту.",
+        "EN": "Ensemble models disagree on this application. Please route to a human expert.",
+    },
+    "high_confidence_alert": {
+        "UZ": "🎯 **Yuqori ishonchli qaror**",
+        "RU": "🎯 **Высокая степень уверенности**",
+        "EN": "🎯 **High Confidence Decision**",
+    },
+    "high_confidence_caption": {
+        "UZ": "Barcha ansambl modellari bir ovozdan rozilik berishgan.",
+        "RU": "Все ансамблевые модели единогласно согласны.",
+        "EN": "All ensemble models unanimously agree.",
     },
     "test_accuracy": {
         "UZ": "Test Aniqligi",
@@ -269,6 +294,11 @@ TRANSLATIONS = {
         "UZ": "ROC Egri Chizig'i",
         "RU": "ROC Кривая",
         "EN": "ROC Curve",
+    },
+    "roc_not_available": {
+        "UZ": "Bu model ehtimollik bashoratini qo'llab-quvvatlamaydi (Hard Voting). ROC egri chizig'i mavjud emas.",
+        "RU": "Эта модель не поддерживает вероятностные прогнозы (Hard Voting). ROC кривая недоступна.",
+        "EN": "This model does not support probability predictions (Hard Voting). ROC curve is unavailable.",
     },
     "feature_importance": {
         "UZ": "🔍 Xususiyat Ahamiyati",

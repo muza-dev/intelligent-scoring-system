@@ -444,7 +444,10 @@ def render_train_page():
         
         with plot_col2:
             st.subheader(t("roc_curve", lang))
-            st.pyplot(results["roc_curve_fig"])
+            if results.get("roc_curve_fig") is not None:
+                st.pyplot(results["roc_curve_fig"])
+            else:
+                st.info(t("roc_not_available", lang))
         
         # Feature importance
         st.markdown("---")
@@ -628,11 +631,11 @@ def render_prediction_page():
                 # Human in the loop flag
                 st.markdown("---")
                 if "Edge Case" in confidence_level:
-                    st.warning("⚠️ **Edge Case - Human Review Required**")
-                    st.caption("Ensemble models disagree on this application. Please route to a human expert.")
+                    st.warning(t("edge_case_single_alert", lang))
+                    st.caption(t("edge_case_single_caption", lang))
                 elif confidence_level == "High Confidence":
-                    st.info("🎯 **High Confidence Decision**")
-                    st.caption("All ensemble models unanimously agree.")
+                    st.info(t("high_confidence_alert", lang))
+                    st.caption(t("high_confidence_caption", lang))
             
             with result_col2:
                 st.markdown(f"**{t('input_summary', lang)}**")
@@ -760,7 +763,7 @@ def render_batch_page():
                     if "Confidence Level" in result_df.columns:
                         edge_cases = result_df["Confidence Level"].str.contains("Edge Case").sum()
                         if edge_cases > 0:
-                            st.warning(f"⚠️ **{edge_cases}** Edge Cases detected. Human review required for these.")
+                            st.warning(t("edge_cases_alert", lang, count=edge_cases))
                 
                 # Results preview
                 st.subheader(t("predictions_header", lang))

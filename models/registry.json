@@ -1,9 +1,9 @@
 {
-  "active": "EnsembleHard",
+  "active": "EnsembleSoft",
   "models": {
     "LogisticRegression": {
       "model_name": "LogisticRegression",
-      "training_date": "2026-04-14T11:43:10.033558",
+      "training_date": "2026-04-16T16:59:00.767486",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -62,7 +62,7 @@
     },
     "RandomForest": {
       "model_name": "RandomForest",
-      "training_date": "2026-04-14T11:43:10.290379",
+      "training_date": "2026-04-16T16:59:00.982818",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -103,17 +103,17 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.78008658008658,
-      "cv_std_accuracy": 0.022394823009023547,
+      "cv_mean_accuracy": 0.7943104514533086,
+      "cv_std_accuracy": 0.018534726228748757,
       "cv_results": {
-        "mean_accuracy": 0.78008658008658,
-        "std_accuracy": 0.022394823009023547,
+        "mean_accuracy": 0.7943104514533086,
+        "std_accuracy": 0.018534726228748757,
         "cv_scores": [
-          0.7575757575757576,
+          0.7878787878787878,
           0.8163265306122449,
-          0.7857142857142857,
-          0.7551020408163265,
-          0.7857142857142857
+          0.8163265306122449,
+          0.7755102040816326,
+          0.7755102040816326
         ]
       },
       "test_accuracy": 0.8292682926829268,
@@ -121,7 +121,7 @@
     },
     "SVM": {
       "model_name": "SVM",
-      "training_date": "2026-04-14T11:43:10.430546",
+      "training_date": "2026-04-16T16:59:01.128803",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -180,7 +180,7 @@
     },
     "MLP": {
       "model_name": "MLP",
-      "training_date": "2026-04-14T11:43:12.231420",
+      "training_date": "2026-04-16T16:59:03.056402",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -221,25 +221,25 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7067821067821068,
-      "cv_std_accuracy": 0.03316401771175951,
+      "cv_mean_accuracy": 0.7048237476808905,
+      "cv_std_accuracy": 0.038455953923832914,
       "cv_results": {
-        "mean_accuracy": 0.7067821067821068,
-        "std_accuracy": 0.03316401771175951,
+        "mean_accuracy": 0.7048237476808905,
+        "std_accuracy": 0.038455953923832914,
         "cv_scores": [
-          0.6767676767676768,
-          0.7551020408163265,
-          0.7244897959183674,
+          0.6363636363636364,
+          0.7346938775510204,
+          0.7448979591836735,
           0.7142857142857143,
-          0.6632653061224489
+          0.6938775510204082
         ]
       },
-      "test_accuracy": 0.7398373983739838,
+      "test_accuracy": 0.7642276422764228,
       "random_state": 42
     },
     "RBFNetwork": {
       "model_name": "RBFNetwork",
-      "training_date": "2026-04-14T11:43:12.285619",
+      "training_date": "2026-04-16T16:59:03.101148",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -280,17 +280,17 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.79428983714698,
-      "cv_std_accuracy": 0.0119987659111605,
+      "cv_mean_accuracy": 0.7963306534735106,
+      "cv_std_accuracy": 0.00916398084749923,
       "cv_results": {
-        "mean_accuracy": 0.79428983714698,
-        "std_accuracy": 0.0119987659111605,
+        "mean_accuracy": 0.7963306534735106,
+        "std_accuracy": 0.00916398084749923,
         "cv_scores": [
           0.797979797979798,
           0.8061224489795918,
           0.8061224489795918,
           0.7857142857142857,
-          0.7755102040816326
+          0.7857142857142857
         ]
       },
       "test_accuracy": 0.8536585365853658,
@@ -298,7 +298,7 @@
     },
     "EnsembleHard": {
       "model_name": "EnsembleHard",
-      "training_date": "2026-04-14T11:43:14.602160",
+      "training_date": "2026-04-16T16:59:05.336234",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -339,14 +339,14 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7983920841063699,
-      "cv_std_accuracy": 0.019535903052485308,
+      "cv_mean_accuracy": 0.7943104514533086,
+      "cv_std_accuracy": 0.014784726511357923,
       "cv_results": {
-        "mean_accuracy": 0.7983920841063699,
-        "std_accuracy": 0.019535903052485308,
+        "mean_accuracy": 0.7943104514533086,
+        "std_accuracy": 0.014784726511357923,
         "cv_scores": [
           0.7878787878787878,
-          0.826530612244898,
+          0.8061224489795918,
           0.8163265306122449,
           0.7857142857142857,
           0.7755102040816326
@@ -357,7 +357,7 @@
     },
     "EnsembleSoft": {
       "model_name": "EnsembleSoft",
-      "training_date": "2026-04-14T11:43:16.421470",
+      "training_date": "2026-04-16T16:59:07.469593",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -398,25 +398,25 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7841269841269841,
-      "cv_std_accuracy": 0.011620070725912894,
+      "cv_mean_accuracy": 0.792269635126778,
+      "cv_std_accuracy": 0.013676096969860562,
       "cv_results": {
-        "mean_accuracy": 0.7841269841269841,
-        "std_accuracy": 0.011620070725912894,
+        "mean_accuracy": 0.792269635126778,
+        "std_accuracy": 0.013676096969860562,
         "cv_scores": [
-          0.7777777777777778,
+          0.7878787878787878,
+          0.7959183673469388,
+          0.8163265306122449,
           0.7857142857142857,
-          0.8061224489795918,
-          0.7755102040816326,
           0.7755102040816326
         ]
       },
-      "test_accuracy": 0.8536585365853658,
+      "test_accuracy": 0.8617886178861789,
       "random_state": 42
     },
     "EnsembleStack": {
       "model_name": "EnsembleStack",
-      "training_date": "2026-04-14T11:43:28.244267",
+      "training_date": "2026-04-16T16:59:16.196747",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
