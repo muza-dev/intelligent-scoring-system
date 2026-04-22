@@ -76,9 +76,9 @@ def predict_single(input_data: dict, model=None) -> tuple[int, float, str, str]:
     if hasattr(model, "named_steps") and "classifier" in model.named_steps and "preprocessor" in model.named_steps:
         clf = model.named_steps["classifier"]
         preprocessor = model.named_steps["preprocessor"]
-        from sklearn.ensemble import VotingClassifier, StackingClassifier
+        from sklearn.ensemble import VotingClassifier
         
-        if isinstance(clf, (VotingClassifier, StackingClassifier)):
+        if isinstance(clf, VotingClassifier):
             try:
                 X_trans = preprocessor.transform(df)
                 base_preds = [est.predict(X_trans)[0] for est in clf.estimators_]
@@ -130,9 +130,9 @@ def predict_batch(df: pd.DataFrame, model=None) -> pd.DataFrame:
     if hasattr(model, "named_steps") and "classifier" in model.named_steps and "preprocessor" in model.named_steps:
         clf = model.named_steps["classifier"]
         preprocessor = model.named_steps["preprocessor"]
-        from sklearn.ensemble import VotingClassifier, StackingClassifier
+        from sklearn.ensemble import VotingClassifier
         
-        if isinstance(clf, (VotingClassifier, StackingClassifier)):
+        if isinstance(clf, VotingClassifier):
             try:
                 X_trans = preprocessor.transform(feature_df)
                 all_base_preds = np.array([est.predict(X_trans) for est in clf.estimators_]).T

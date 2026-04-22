@@ -141,7 +141,7 @@ def evaluate_model(model=None):
     # Predictions
     y_pred = model.predict(X_test)
     
-    # Some models (e.g. EnsembleHard with voting='hard') don't support predict_proba
+    # Some models don't support predict_proba; handle gracefully
     y_proba = None
     if hasattr(model, "predict_proba"):
         try:

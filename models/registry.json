@@ -3,7 +3,7 @@
   "models": {
     "LogisticRegression": {
       "model_name": "LogisticRegression",
-      "training_date": "2026-04-16T16:59:00.767486",
+      "training_date": "2026-04-22T17:03:29.878055",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -62,7 +62,7 @@
     },
     "RandomForest": {
       "model_name": "RandomForest",
-      "training_date": "2026-04-16T16:59:00.982818",
+      "training_date": "2026-04-22T17:03:30.076794",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -103,25 +103,25 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7943104514533086,
-      "cv_std_accuracy": 0.018534726228748757,
+      "cv_mean_accuracy": 0.7840857555143269,
+      "cv_std_accuracy": 0.02203585460708609,
       "cv_results": {
-        "mean_accuracy": 0.7943104514533086,
-        "std_accuracy": 0.018534726228748757,
+        "mean_accuracy": 0.7840857555143269,
+        "std_accuracy": 0.02203585460708609,
         "cv_scores": [
-          0.7878787878787878,
-          0.8163265306122449,
-          0.8163265306122449,
-          0.7755102040816326,
+          0.797979797979798,
+          0.7959183673469388,
+          0.8061224489795918,
+          0.7448979591836735,
           0.7755102040816326
         ]
       },
-      "test_accuracy": 0.8292682926829268,
+      "test_accuracy": 0.8211382113821138,
       "random_state": 42
     },
     "SVM": {
       "model_name": "SVM",
-      "training_date": "2026-04-16T16:59:01.128803",
+      "training_date": "2026-04-22T17:03:30.173376",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -180,7 +180,7 @@
     },
     "MLP": {
       "model_name": "MLP",
-      "training_date": "2026-04-16T16:59:03.056402",
+      "training_date": "2026-04-22T17:03:31.431687",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -221,25 +221,25 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7048237476808905,
-      "cv_std_accuracy": 0.038455953923832914,
+      "cv_mean_accuracy": 0.7108431251288395,
+      "cv_std_accuracy": 0.035244773331831174,
       "cv_results": {
-        "mean_accuracy": 0.7048237476808905,
-        "std_accuracy": 0.038455953923832914,
+        "mean_accuracy": 0.7108431251288395,
+        "std_accuracy": 0.035244773331831174,
         "cv_scores": [
-          0.6363636363636364,
-          0.7346938775510204,
-          0.7448979591836735,
+          0.6868686868686869,
+          0.7040816326530612,
+          0.7755102040816326,
           0.7142857142857143,
-          0.6938775510204082
+          0.673469387755102
         ]
       },
-      "test_accuracy": 0.7642276422764228,
+      "test_accuracy": 0.7723577235772358,
       "random_state": 42
     },
     "RBFNetwork": {
       "model_name": "RBFNetwork",
-      "training_date": "2026-04-16T16:59:03.101148",
+      "training_date": "2026-04-22T17:03:31.468053",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -280,133 +280,15 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7963306534735106,
-      "cv_std_accuracy": 0.00916398084749923,
+      "cv_mean_accuracy": 0.79428983714698,
+      "cv_std_accuracy": 0.0119987659111605,
       "cv_results": {
-        "mean_accuracy": 0.7963306534735106,
-        "std_accuracy": 0.00916398084749923,
+        "mean_accuracy": 0.79428983714698,
+        "std_accuracy": 0.0119987659111605,
         "cv_scores": [
           0.797979797979798,
           0.8061224489795918,
           0.8061224489795918,
-          0.7857142857142857,
-          0.7857142857142857
-        ]
-      },
-      "test_accuracy": 0.8536585365853658,
-      "random_state": 42
-    },
-    "EnsembleHard": {
-      "model_name": "EnsembleHard",
-      "training_date": "2026-04-16T16:59:05.336234",
-      "dataset_shape": {
-        "train_samples": 491,
-        "test_samples": 123,
-        "n_features": 11
-      },
-      "feature_columns": [
-        "ApplicantIncome",
-        "CoapplicantIncome",
-        "LoanAmount",
-        "Loan_Amount_Term",
-        "Credit_History",
-        "Gender",
-        "Married",
-        "Dependents",
-        "Education",
-        "Self_Employed",
-        "Property_Area"
-      ],
-      "feature_names_transformed": [
-        "numeric__ApplicantIncome",
-        "numeric__CoapplicantIncome",
-        "numeric__LoanAmount",
-        "numeric__Loan_Amount_Term",
-        "numeric__Credit_History",
-        "categorical__Gender_Female",
-        "categorical__Gender_Male",
-        "categorical__Married_No",
-        "categorical__Married_Yes",
-        "categorical__Dependents_0",
-        "categorical__Dependents_1",
-        "categorical__Dependents_2",
-        "categorical__Dependents_3+",
-        "categorical__Education_Graduate",
-        "categorical__Education_Not Graduate",
-        "categorical__Self_Employed_No",
-        "categorical__Self_Employed_Yes",
-        "categorical__Property_Area_Rural",
-        "categorical__Property_Area_Semiurban",
-        "categorical__Property_Area_Urban"
-      ],
-      "cv_mean_accuracy": 0.7943104514533086,
-      "cv_std_accuracy": 0.014784726511357923,
-      "cv_results": {
-        "mean_accuracy": 0.7943104514533086,
-        "std_accuracy": 0.014784726511357923,
-        "cv_scores": [
-          0.7878787878787878,
-          0.8061224489795918,
-          0.8163265306122449,
-          0.7857142857142857,
-          0.7755102040816326
-        ]
-      },
-      "test_accuracy": 0.8536585365853658,
-      "random_state": 42
-    },
-    "EnsembleSoft": {
-      "model_name": "EnsembleSoft",
-      "training_date": "2026-04-16T16:59:07.469593",
-      "dataset_shape": {
-        "train_samples": 491,
-        "test_samples": 123,
-        "n_features": 11
-      },
-      "feature_columns": [
-        "ApplicantIncome",
-        "CoapplicantIncome",
-        "LoanAmount",
-        "Loan_Amount_Term",
-        "Credit_History",
-        "Gender",
-        "Married",
-        "Dependents",
-        "Education",
-        "Self_Employed",
-        "Property_Area"
-      ],
-      "feature_names_transformed": [
-        "numeric__ApplicantIncome",
-        "numeric__CoapplicantIncome",
-        "numeric__LoanAmount",
-        "numeric__Loan_Amount_Term",
-        "numeric__Credit_History",
-        "categorical__Gender_Female",
-        "categorical__Gender_Male",
-        "categorical__Married_No",
-        "categorical__Married_Yes",
-        "categorical__Dependents_0",
-        "categorical__Dependents_1",
-        "categorical__Dependents_2",
-        "categorical__Dependents_3+",
-        "categorical__Education_Graduate",
-        "categorical__Education_Not Graduate",
-        "categorical__Self_Employed_No",
-        "categorical__Self_Employed_Yes",
-        "categorical__Property_Area_Rural",
-        "categorical__Property_Area_Semiurban",
-        "categorical__Property_Area_Urban"
-      ],
-      "cv_mean_accuracy": 0.792269635126778,
-      "cv_std_accuracy": 0.013676096969860562,
-      "cv_results": {
-        "mean_accuracy": 0.792269635126778,
-        "std_accuracy": 0.013676096969860562,
-        "cv_scores": [
-          0.7878787878787878,
-          0.7959183673469388,
-          0.8163265306122449,
           0.7857142857142857,
           0.7755102040816326
         ]
@@ -414,9 +296,9 @@
       "test_accuracy": 0.8617886178861789,
       "random_state": 42
     },
-    "EnsembleStack": {
-      "model_name": "EnsembleStack",
-      "training_date": "2026-04-16T16:59:16.196747",
+    "EnsembleSoft": {
+      "model_name": "EnsembleSoft",
+      "training_date": "2026-04-22T17:03:32.961775",
       "dataset_shape": {
         "train_samples": 491,
         "test_samples": 123,
@@ -457,16 +339,16 @@
         "categorical__Property_Area_Semiurban",
         "categorical__Property_Area_Urban"
       ],
-      "cv_mean_accuracy": 0.7963512677798392,
-      "cv_std_accuracy": 0.016836273279183304,
+      "cv_mean_accuracy": 0.7882086167800454,
+      "cv_std_accuracy": 0.01600849214940844,
       "cv_results": {
-        "mean_accuracy": 0.7963512677798392,
-        "std_accuracy": 0.016836273279183304,
+        "mean_accuracy": 0.7882086167800454,
+        "std_accuracy": 0.01600849214940844,
         "cv_scores": [
-          0.7878787878787878,
+          0.7777777777777778,
+          0.7959183673469388,
           0.8163265306122449,
-          0.8163265306122449,
-          0.7857142857142857,
+          0.7755102040816326,
           0.7755102040816326
         ]
       },

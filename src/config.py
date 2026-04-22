@@ -29,9 +29,7 @@ MODEL_PATHS = {
     "SVM":                MODELS_DIR / "svm.joblib",
     "MLP":                MODELS_DIR / "mlp.joblib",
     "RBFNetwork":         MODELS_DIR / "rbf_network.joblib",
-    "EnsembleHard":       MODELS_DIR / "ensemble_hard.joblib",
     "EnsembleSoft":       MODELS_DIR / "ensemble_model.joblib",
-    "EnsembleStack":      MODELS_DIR / "ensemble_stack.joblib",
 }
 
 # =============================================================================

@@ -3,7 +3,7 @@ Model training module for the Intelligent Scoring application.
 """
 import joblib
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier, StackingClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.kernel_approximation import Nystroem
@@ -40,23 +40,12 @@ def create_models() -> dict[str, Pipeline]:
         ('rbf', RBFNetworkClassifier(gamma='scale'))
     ]
     
-    ensemble_hard = VotingClassifier(
-        estimators=base_learners,
-        voting='hard'
-    )
-    
     ensemble_soft = VotingClassifier(
         estimators=base_learners,
         voting='soft',
         weights=config.ENSEMBLE_SOFT_WEIGHTS
     )
 
-    ensemble_stack = StackingClassifier(
-        estimators=base_learners,
-        final_estimator=LogisticRegression(),
-        cv=5
-    )
-    
     # Re-use pipelines to ensure preprocessor runs before everything
     # We provide the base models in pipelines as well to evaluate their individual performance
     models = {
@@ -80,17 +69,9 @@ def create_models() -> dict[str, Pipeline]:
             ("preprocessor", create_preprocessor()),
             ("classifier", RBFNetworkClassifier(gamma='scale')),
         ]),
-        "EnsembleHard": Pipeline([
-            ("preprocessor", create_preprocessor()),
-            ("classifier", ensemble_hard),
-        ]),
         "EnsembleSoft": Pipeline([
             ("preprocessor", create_preprocessor()),
             ("classifier", ensemble_soft),
-        ]),
-        "EnsembleStack": Pipeline([
-            ("preprocessor", create_preprocessor()),
-            ("classifier", ensemble_stack),
         ]),
     }
     

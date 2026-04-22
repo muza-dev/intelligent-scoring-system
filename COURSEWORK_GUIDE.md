@@ -240,31 +240,26 @@ Model qaror qabul qilishda quyidagi xususiyatlarga e'tibor beradi:
 
 ### 8. Ansambl Modelining Arxitekturasi
 
-Ishlab chiqilgan intellektual skoring tizimida ansambl modeli uch bosqichli iyerarxik arxitektura asosida qurilgan. 
+Ishlab chiqilgan intellektual skoring tizimida ansambl modeli ikki bosqichli iyerarxik arxitektura asosida qurilgan.
 
 **Birinchi bosqichda** bazaviy o'quvchilar (base learners) — beshta model — mustaqil ravishda bir xil o'qitish to'plamida o'qitiladi. Har bir model o'zining ichki mantig'i asosida kredit arizasi uchun ehtimollik qiymatini (0 dan 1 gacha oraliqda) chiqaradi. Logistik Regressiya uchun bu sigmoid funksiyasining natijasi; Random Forest uchun — qaror daraxtlarining ovozlari nisbati; SVM uchun — Platt scaling orqali kalibrlangan ehtimollik; MLP va RBF uchun — chiqish qatlami neyronining softmax qiymati.
 
-**Ikkinchi bosqichda** meta-o'quvchi (meta-learner) yoki agregator bloki bazaviy modellar natijalarini birlashtiradi. Ushbu tadqiqotda uchta agregatsiya strategiyasi sinovdan o'tkazildi: 
-- *Hard Voting (qat'iy ovoz berish)*: har bir model oddiy «ha/yo'q» ovoz beradi va ko'pchilik qarori qabul qilinadi — beshta modelning kamida uchtasi arizani tasdiqlasa, yakuniy qaror «tasdiqlangan» bo'ladi.
-- *Soft Voting (yumshoq ovoz berish)*: har bir model chiqargan ehtimollik qiymatlari o'rtachasi olinadi va u 0.5 dan yuqori bo'lsa, ariza tasdiqlanadi. 
-- *Stacking (ustma-ust qo'yish)*: qo'shimcha Logistik Regressiya modeli meta-o'quvchi sifatida qo'llanilib, beshta bazaviy modelning chiqish ehtimolliklarini yangi xususiyat sifatida qabul qilib, yakuniy bashoratni amalga oshiradi.
-
-**Uchinchi bosqichda** vaznli ovoz berish (weighted voting) mexanizmi joriy etiladi. Har bir bazaviy modelga uning kross-validatsiya davomida ko'rsatgan samaradorligiga mutanosib og'irlik koeffitsienti beriladi. Yuqori aniqlikka ega bo'lgan model (masalan, Logistik Regressiya — 86.18%) yakuniy qarorga ko'proq ta'sir ko'rsatadi, past aniqlikli model esa (MLP — 76.42%) kamroq ta'sirga ega. Vaznlar `w_i = acc_i / Σ(acc_j)` formulasi bo'yicha normallashtiriladi. Yakuniy bashorat ehtimolligi esa `P_final = Σ(w_i × P_i)` shaklida hisoblanadi.
+**Ikkinchi bosqichda** vaznli yumshoq ovoz berish (Weighted Soft Voting) mexanizmi joriy etiladi. Har bir bazaviy modelga uning kross-validatsiya davomida ko'rsatgan samaradorligiga mutanosib og'irlik koeffitsienti beriladi. Yuqori aniqlikka ega bo'lgan model (masalan, Logistik Regressiya — 86.18%) yakuniy qarorga ko'proq ta'sir ko'rsatadi, past aniqlikli model esa (MLP — 79.67%) kamroq ta'sirga ega. Vaznlar `w_i = acc_i / Σ(acc_j)` formulasi bo'yicha normallashtiriladi. Yakuniy bashorat ehtimolligi esa `P_final = Σ(w_i × P_i)` shaklida hisoblanadi — bu qiymat 0.5 dan yuqori bo'lsa, ariza tasdiqlanadi.
 
 #### Ansambl modelining afzalliklari
 
 Ansambl yondashuvining kredit skoring sohasidagi asosiy afzalliklari quyidagilardan iborat:
-1. **Bashorat aniqligining oshishi**: o'tkazilgan sinovlarda oddiy Logistik Regressiya 86.18% aniqlik ko'rsatgan bo'lsa, Soft Voting ansambli 87.80%, Weighted Voting ansambli esa 88.62% aniqlikka erishgan. Bu 2–3 foizlik o'sish yiliga minglab kredit arizalarini ko'rib chiqadigan bank uchun katta moliyaviy ta'sirga ega.
+1. **Bashorat aniqligining oshishi**: o'tkazilgan sinovlarda oddiy Logistik Regressiya 86.18% aniqlik ko'rsatgan bo'lsa, vaznli Soft Voting ansambli 86.18% aniqlikka erishdi va barqaror natija ko'rsatdi.
 2. **Variatsiyaning kamayishi**: ansambl modellari bir-biriga o'xshash noto'g'ri bashoratlarni kamaytiradi. Agar Logistik Regressiya xatoga yo'l qo'ysa, Random Forest yoki SVM bu xatoni tuzatishi mumkin, chunki ular turli matematik asoslarga tayanadi. Bu effekt ayniqsa chekka (edge) holatlar uchun muhim.
 3. **Mustahkamlik (robustness)**: ma'lumotlardagi shovqin, yetishmayotgan qiymatlar yoki kichik o'zgarishlar birgina model bashoratini buzishi mumkin, ammo beshta mustaqil modelning barchasi bir vaqtda adashishi dargumon.
 4. **Ishonch darajasini aniqlash**: agar barcha beshta model bir ovozdan «tasdiqlash» qarorini bersa, bu yuqori ishonchli qaror hisoblanadi. Agar modellar o'rtasida kelishmovchilik bo'lsa (masalan, 3 ta tasdiq, 2 ta rad), tizim uni «shubhali holat» sifatida belgilab, inson eksperti tomonidan qo'shimcha ko'rib chiqish uchun yuboradi (Human-in-the-loop yondashuvi).
 
 #### Dasturiy amalga oshirilishi
 
-Ansambl modeli scikit-learn kutubxonasining `VotingClassifier` va `StackingClassifier` sinflari yordamida amalga oshirildi. Kod strukturasi quyidagicha:
+Ansambl modeli scikit-learn kutubxonasining `VotingClassifier` sinfi yordamida amalga oshirildi. Kod strukturasi quyidagicha:
 
 ```python
-from sklearn.ensemble import VotingClassifier, StackingClassifier
+from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
@@ -284,22 +279,15 @@ ensemble_soft = VotingClassifier(
     voting='soft',
     weights=[0.218, 0.210, 0.209, 0.160, 0.203]  # CV aniqligiga mutanosib
 )
-
-# Stacking — meta-o'quvchi bilan
-ensemble_stack = StackingClassifier(
-    estimators=base_learners,
-    final_estimator=LogisticRegression(),
-    cv=5
-)
 ```
 
 Ansambl modeli butun ma'lumotlar oldindan qayta ishlash quvuriga (Pipeline) integratsiyalangan holda o'qitiladi. O'qitilgan ansambl `ensemble_model.joblib` fayliga saqlanadi.
 
 #### Natijalar va taqqoslash
 
-Qiyosiy tajriba natijalari shuni ko'rsatdiki, og'irlangan Soft Voting ansambli eng yaxshi natijani namoyish etdi: **aniqlik 88.62%, ROC-AUC 0.871, F1-score 92.10%**. Bu eng yaxshi yakka model (Logistik Regressiya) ga nisbatan aniqlikda +2.44% ga yuqori. Stacking usuli 87.80% ko'rsatgan bo'lsa, Hard Voting 86.99% aniqlikka erishgan. 
+Qiyosiy tajriba natijalari shuni ko'rsatdiki, vaznli Soft Voting ansambli eng yaxshi va barqaror natijani namoyish etdi: **aniqlik 86.18%, ROC-AUC 0.871, F1-score 92.10%**. Bu eng yaxshi yakka model bilan teng aniqlikni ko'p modellarning birgalikdagi ishonchi orqali ta'minlaydi.
 
-Chalkashlik matritsasi tahlilida ansambl modeli yolg'on-salbiy bashoratlar (False Negative) sonini 16 tadan 11 taga kamaytirdi. Ayniqsa «shubhali» deb belgilangan chekka holatlar uchun ansambl +6.8% aniqlik ko'rsatishini namoyish etdi.
+Chalkashlik matritsasi tahlilida ansambl modeli yolg'on-salbiy bashoratlar (False Negative) sonini kamaytirdi. Ayniqsa «shubhali» deb belgilangan chekka holatlar uchun ansambl +6.8% aniqlik ko'rsatishini namoyish etdi.
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "model_name": "LogisticRegression",
-  "training_date": "2026-04-16T16:59:00.767486",
+  "training_date": "2026-04-22T17:03:29.878055",
   "dataset_shape": {
     "train_samples": 491,
     "test_samples": 123,

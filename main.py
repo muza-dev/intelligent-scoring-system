@@ -824,6 +824,7 @@ def render_about_page():
     - **Support Vector Machine (SVM)** ({t("svm_desc", lang)})
     - **MLP Classifier** ({t("mlp_desc", lang)})
     - **RBF Network** ({t("rbf_desc", lang)})
+    - **EnsembleSoft** ({t("ensemble_soft_desc", lang)})
     
     {t("cv_selection", lang)}
     

@@ -762,9 +762,9 @@ TRANSLATIONS = {
         "EN": "Model",
     },
     "models_compared": {
-        "UZ": "Ilova beshta mashinaviy o'rganish modelini solishtiradi:",
-        "RU": "Приложение сравнивает пять моделей машинного обучения:",
-        "EN": "The application compares five machine learning models:",
+        "UZ": "Ilova olti mashinaviy o'rganish modelini solishtiradi:",
+        "RU": "Приложение сравнивает шесть моделей машинного обучения:",
+        "EN": "The application compares six machine learning models:",
     },
     "baseline": {
         "UZ": "asosiy",
@@ -790,6 +790,11 @@ TRANSLATIONS = {
         "UZ": "radial bazis funksiyasi tarmog'i",
         "RU": "сеть радиальной базисной функции",
         "EN": "radial basis function network",
+    },
+    "ensemble_soft_desc": {
+        "UZ": "og'irlangan yumshoq ovoz berish ansambli (5 ta bazaviy model)",
+        "RU": "ансамбль взвешенного мягкого голосования (5 базовых моделей)",
+        "EN": "weighted soft-voting ensemble of all 5 base models",
     },
     "cv_selection": {
         "UZ": "Eng yaxshi model 5-fold cross-validation orqali avtomatik tanlanadi.",
