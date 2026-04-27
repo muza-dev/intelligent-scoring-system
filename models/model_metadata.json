@@ -1,6 +1,6 @@
 {
-  "model_name": "LogisticRegression",
-  "training_date": "2026-04-22T17:03:29.878055",
+  "model_name": "RBFNetwork",
+  "training_date": "2026-04-23T22:36:09.209048",
   "dataset_shape": {
     "train_samples": 491,
     "test_samples": 123,
@@ -41,19 +41,19 @@
     "categorical__Property_Area_Semiurban",
     "categorical__Property_Area_Urban"
   ],
-  "cv_mean_accuracy": 0.7983714698000413,
-  "cv_std_accuracy": 0.016295788434948617,
+  "cv_mean_accuracy": 0.8004122861265717,
+  "cv_std_accuracy": 0.01885466542609365,
   "cv_results": {
-    "mean_accuracy": 0.7983714698000413,
-    "std_accuracy": 0.016295788434948617,
+    "mean_accuracy": 0.8004122861265717,
+    "std_accuracy": 0.01885466542609365,
     "cv_scores": [
       0.797979797979798,
-      0.8163265306122449,
+      0.826530612244898,
       0.8163265306122449,
       0.7857142857142857,
       0.7755102040816326
     ]
   },
-  "test_accuracy": 0.8617886178861789,
+  "test_accuracy": 0.8536585365853658,
   "random_state": 42
 }

@@ -1,184 +1,170 @@
-# Codebase Explanation for Defense
+# Kod Tushuntirish — Himoya uchun
 
-This document explains every part of the code in simple words. You can use this to answer questions during your defense.
+**Loyiha nomi:** Iste'mol Kreditlari uchun Intellektual Skoring Modeli
 
-## 1. Main Application (`main.py`)
-
-This file is the **entry point** of the web application. It connects the user interface (UI) to the logic.
-
-### **Imports & Setup (Lines 1-35)**
-- **Lines 14-19:** We tell Python where to look for our code folders. It adds the project root to the "path".
-- **Lines 21-25:** Import libraries:
-    - `streamlit`: The library that builds the website.
-    - `base64`: Helps us load images (like the sidebar background).
-    - `pandas` & `numpy`: Tools for working with data tables and numbers.
-- **Lines 27-32:** Import our own custom code modules from the `src` folder (like `eda`, `predict`, `i18n` for translations).
-
-### **Page Configuration (Lines 39-44)**
-- `st.set_page_config(...)`: Sets the browser tab title to "Intelligent Scoring", adds a bank icon (🏦), and sets the layout to "wide" (uses full screen).
-
-### **Sidebar Background (Lines 46-76)**
-- **What it does:** Shows the multicolor background picture in the sidebar.
-- **`get_base64_of_bin_file()`**: Reads the image file and turns it into a long text string (Base64) so the browser can read it.
-- **`set_sidebar_background()`**: Uses CSS (web design code) to "inject" this image into the specific sidebar part of the page (`data-testid="stSidebar"`).
-
-### **Language Support (Lines 81-88)**
-- Checks if a language is selected. If not, it sets the default to Uzbek (`DEFAULT_LANGUAGE`).
-- `get_lang()`: A simple helper to ask "What language is currently selected?".
-
-### **Caching (Lines 93-108)**
-- **`@st.cache_resource`**: This is very important! It tells Streamlit: "Run this function ONCE and save the result."
-- **`get_model()`**: Loads the AI model from the file. We cache it so we don't reload the heavy model file every time you click a button (which would be slow).
-- **`get_cached_metadata()`**: Similar to above, but for the "About" page info (like accuracy score).
-
-### **Sidebar Navigation (Lines 119-161)**
-- **`render_sidebar()`**: Draws the left sidebar menu.
-- **Line 127:** Dropdown to pick Language (Uzbek, Russian, English).
-- **Line 135:** Reloads the app immediately if you change the language (`st.rerun()`).
-- **Line 141:** The "Radio Button" menu that lets you switch between pages:
-    - Train & Metrics (Modelni O'qitish)
-    - EDA (Ma'lumotlar Tahlili)
-    - Single Prediction (Yakka Bashorat)
-    - Batch Prediction (Ommaviy Bashorat)
-    - About (Haqida)
-
-### **Training Page Logic (Lines 167-242)**
-- **`render_train_page()`**: Runs when you select "Train & Metrics".
-- **Lines 176-187:** Checks if `train.csv` exists. If not, shows an error and explains how to download it.
-- **Line 195 (Button):** If you click "Train Model":
-    - Shows a spinner ("Training model...").
-    - Calls `train_model()` (from our `train.py` file) which actually does the ML work.
-    - If successful, it shows a success message ("Model trained!").
-    - **Line 204:** Reloads the page so the new model is loaded immediately.
-- **Lines 214-215:** Shows the current model name (e.g., "LogisticRegression") and its accuracy score.
-- **Line 229:** Uses `evaluate_model()` to calculate how good the model is.
-- **Lines 234-239:** Shows the **Metrics** (Accuracy, Precision, Recall, F1, ROC-AUC) in big numbers.
-- **Lines 246-250:** Draws the **Confusion Matrix** (where did the model make mistakes?) and **ROC Curve** charts.
-
-### **Prediction Logic (Lines 245-364)**
-*Note: This starts later in the file around line 260*
-- **`render_prediction_page()`**: Runs when you select "Single Prediction".
-- **Step 1:** Checks if a model exists in the `registry.json`. If no model is active, warns you to go train one first.
-- **Step 2:** Creates interactive input panels for the user:
-    - **Interactive Math (Live Reactivity):** It calculates `Loan_Amount_Term` dynamically using a 35% DTI (Debt-to-Income) logic. The app reads `ApplicantIncome` + `CoapplicantIncome`, allocates 35% to the loan, and calculates the minimum playable months dynamically. Users can't select fewer months than this mathematical baseline.
-    - **Number Inputs:** Income, Loan Amount.
-    - **Select Boxes (Dropdowns):** Gender, Married, Education, Property Area, etc.
-- **Step 3:** "Predict" button.
-- **Step 4:** Collects all inputs into a dictionary (`input_data`), enforcing the boundaries set above.
-- **Step 5:** Calls `predict_single()` which asks the active Ensemble model for a result. Under the hood, it breaks down the Ensemble model to see what ALL sub-models individually think.
-- **Step 6:** Shows the result:
-    - Green box if Approved. Red box if Rejected. Shows a probability bar.
-    - **Confidence Badges (Human-In-The-Loop):** By tracking model consensus, if sub-models disagree deeply, it raises a yellow "Edge Case / Manual Review Required" flag for human experts to review manually. Otherwise, it stamps "High Confidence".
-
-### **Main Execution (Lines 640-664)**
-- **`main()`**: The "boss" function.
-- It calls `render_sidebar()` to see which page you want.
-- Then use `if/elif` to run the correct function for that page (`render_train_page`, `render_eda_page`, etc.).
-- **Line 665:** Standard Python pattern `if __name__ == "__main__": main()` ensures this only runs if you execute the file directly.
+Ushbu hujjat kodning har bir qismini oddiy so'zlar bilan tushuntiradi. Himoya davomida savollarni javoblash uchun foydalanishingiz mumkin.
 
 ---
 
-## 2. Exploratory Data Analysis (`src/eda.py`)
+## 1. Asosiy Ilova (`main.py`)
 
-This file handles the visual analysis part of the app (the "Ma'lumotlar Tahlili" page).
+Bu fayl veb-ilovaning **kirish nuqtasi**. U foydalanuvchi interfeysini (UI) biznes logikasi bilan bog'laydi.
 
-### **Imports & Data Loading (Lines 1-18)**
-- Imports plotting libraries (`seaborn`, `matplotlib`) and our `config`.
-- **`load_data()`**: Tries to read `train.csv`. If the file is missing, it returns `None`.
+### Import va Sozlash
+- `streamlit` — veb-sahifani quruvchi kutubxona.
+- `pandas` va `numpy` — ma'lumotlar jadvallari va raqamlar bilan ishlash uchun.
+- `src` papkasidan o'zimizning modullar: `train`, `predict`, `evaluate`, `explain`, `eda`, `i18n`, `auth`, `utils`.
 
-### **Page Rendering (Lines 20-30)**
-- **`render_eda_page()`**: The main function for this page.
-- Sets the title (translated).
-- Loads the data. If data is missing (`df is None`), it shows an error message.
+### Sahifa Konfiguratsiyasi
+- `st.set_page_config(...)` — brauzer yorlig'i sarlavhasi "Iste'mol Kreditlari uchun Intellektual Skoring Modeli", ikonka 🏦, keng (wide) tartib.
 
-### **Visualization Sections**
-1.  **Overview (Lines 37-41):** Displays 3 key numbers: Total rows (records), Total columns (features), and Missing values (empty cells).
-2.  **Raw Data (Lines 34 & 43):** A checkbox. If checked, it shows the first 5 rows of the actual table.
-3.  **Target Distribution (Lines 50-55):** A bar chart showing how many Loans were Approved (Y) vs Rejected (N). This is important to see if our dataset is balanced.
-4.  **Categorical Features (Lines 60-83):**
-    - A dropdown lets you pick a feature like "Gender" or "Education".
-    - **Fig 1 (Left):** Shows the count of that feature (e.g., how many Males vs Females).
-    - **Fig 2 (Right):** Shows the relationship with Loan Status (e.g., Do Males get approved more often?).
-5.  **Numerical Features (Lines 88-108):**
-    - Similar dropdown for numbers like "Income".
-    - **Fig 1 (Left):** Histogram (distribution).
-    - **Fig 2 (Right):** Box plot (shows outliers and median) split by Approved/Rejected.
-6.  **Correlation (Lines 113-121):**
-    - Shows a "Heatmap". Red means high positive correlation (they go up together), Blue means negative.
+### Kesh (Caching)
+- `@st.cache_resource` — modelni bir marta yuklab, keyingi har bir bosishda qayta yuklamaslik uchun.
+- `get_model(model_key)` — faollashtirilen modelni diskdan yuklaydi.
+- `get_cached_evaluation(model_key)` — berilgan model uchun baholash natijalarini keshga oladi.
+- `get_cached_feature_importance(model_key)` — xususiyat ahamiyatini keshga oladi.
+- `clear_model_cache()` — yangi o'qitishdan so'ng barcha keshni tozalaydi.
 
----
+### Sidebar Navigatsiya (`render_sidebar()`)
+- Til tanlash (UZ / RU / EN) va Mavzu tanlash (💻 / 🌙 / ☀️) — yon panelning yuqori qismida.
+- **Rol belgisi**: Admin uchun 🔐 Admin, xodim uchun 🏦 Bank Xodimi.
+- **Faol Model ro'yxati**: Admin o'qitilgan 6 ta model orasidan faolini almashtira oladi — tanlanganda kesh tozalanib sahifa yangilanadi.
+- **Model holati**: Faol modelning aniqligi sidebar'da ko'rsatiladi.
+- **Chiqish tugmasi**: Istalgan vaqtda sessiyani tugatish.
 
-## 3. Model Training (`src/train.py`)
-
-This is the "Brain" of the project where learning happens.
-
-### **Pipeline Creation (Lines 18-38)**
-- **`create_models()`**: Defines five AI candidates:
-    1.  **Logistic Regression:** Good, simple baseline model.
-    2.  **Random Forest:** More complex, powerful "ensemble" of decision trees.
-    3.  **SVM:** Non-linear Support Vector Machine.
-    4.  **MLP:** Multi-layer neural network.
-    5.  **RBF Network:** Radial Basis Function classifier.
-- It uses a **Pipeline**. This is a wrapper that says: "First, clean the data (Preprocessor), THEN train the model (Classifier)". This ensures we always process data the exact same way.
-
-### **Model Selection (Lines 41-86)**
-- **`select_best_model()`**:
-    - We don't just pick one. We try both!
-    - **Cross-Validation (CV):** We split data into 5 parts. We train on 4 and test on 1, then rotate. This gives us 5 scores.
-    - We take the average accuracy.
-    - The model with the highest average score wins and is returned as the `best_model`.
-
-### **Training Function (Lines 89-157)**
-- **`train_model()`**:
-    - Loads data.
-    - Calls `select_best_model()` to find the winner.
-    - **Line 114:** Retrains the winner on the *entire* dataset to make it as smart as possible.
-    - **Line 148:** Saves the trained model to a file (`loan_model.joblib`) so we can use it later without retraining.
-    - **Line 152:** Saves "metadata" (info about accuracy, date, etc.) to a JSON file.
+### Sahifalar
+| Sahifa | Rol | Tavsif |
+|---|---|---|
+| Asosiy (Welcome) | Barcha | Rolga mos qisqacha ko'rsatma |
+| O'qitish va Metrikalar | Faqat Admin | 6 model o'qitish, metrikalar, CM, ROC, xususiyat ahamiyati |
+| Ma'lumotlar Tahlili (EDA) | Faqat Admin | Vizual dataset tahlili |
+| Yakka Bashorat | Barcha | Bitta ariza bashorati, HITL, Feature Importance |
+| Ommaviy Bashorat | Barcha | CSV yuklash, ko'plab arizalar, natija yuklab olish |
+| Foydalanuvchilar | Faqat Admin | Xodim qo'shish, ko'rish, o'chirish |
+| Haqida | Faqat Admin | Dataset, modellar, metodologiya |
 
 ---
 
-## 4. Prediction Logic (`src/predict.py`)
+## 2. Autentifikatsiya (`src/auth.py` + `src/security.py` + `src/db.py`)
 
-This file uses the saved model to guess "Yes" or "No" for new people.
+### Kirish Jarayoni
+1. Foydalanuvchi username va parol kiritadi.
+2. `get_user(username)` — SQLite `users.db` dan foydalanuvchi topiladi.
+3. `verify_password(stored_hash, provided)` — PBKDF2-SHA256 bilan parol tekshiriladi.
+4. Muvaffaqiyatli bo'lsa: `role`, `username`, `full_name` session'ga saqlanadi.
 
-### **Loading (Lines 15-32)**
-- **`load_model()`**: Reads the `loan_model.joblib` file from disk. If missing, it complains (raises Error).
+### Xavfsizlik
+- **PBKDF2-SHA256**: Har bir parol uchun 32-baytli tasodifiy tuz (`os.urandom(32)`) yaratiladi, 100 000 iteratsiya bilan xeshlanadi.
+- **Sessiya Timeout**: 10 daqiqa harakatsizlik aniqlansa, sessiya avtomatik tugatiladi va timeout xabari ko'rsatiladi.
+- **Noto'g'ri Urinishlar**: `failed_attempts` hisoblagichi har noto'g'ri kirishda oshadi.
+- **Admin Himoyasi**: Admin akkaunt o'chirib bo'lmaydi (`DELETE ... WHERE role != 'admin'`).
 
-### **Single Prediction (Lines 35-63)**
-- **`predict_single(input_data)`**:
-    - Takes user input (dictionary).
-    - Converts it to a DataFrame (table).
-    - **Line 56:** `model.predict()` -> Returns 1 (Yes) or 0 (No).
-    - **Line 57:** `model.predict_proba()` -> Returns the confidence score (e.g., 0.85).
-    - Returns the result so the UI can show it.
-
-### **Batch Prediction (Lines 66-99)**
-- **`predict_batch(df)`**:
-    - Takes a big CSV file of many applicants.
-    - Runs the model on all of them at once.
-    - Adds "Status" and "Probability" columns to the file.
-    - Returns the new table for the user to download.
+### Foydalanuvchi Ma'lumotlar Bazasi
+SQLite jadval: `id`, `full_name`, `phone_number`, `email`, `username`, `password_hash`, `national_id`, `address`, `monthly_income`, `role`, `created_at`.
 
 ---
 
-## 5. Internationalization (`src/i18n.py`)
+## 3. Model O'qitish (`src/train.py`)
 
-This file handles the translations (Uzbek, Russian, English).
- 
-### **Data Structure (Lines 6-11)**
-- **`LANGUAGES`**: A simple dictionary mapping codes ("UZ") to names ("O'zbek").
+### `create_models()` — 6 ta Model
+```python
+models = {
+    "LogisticRegression": Pipeline([preprocessor, LogisticRegression(...)]),
+    "RandomForest":       Pipeline([preprocessor, RandomForestClassifier(...)]),
+    "SVM":                Pipeline([preprocessor, SVC(probability=True, ...)]),
+    "MLP":                Pipeline([preprocessor, MLPClassifier(...)]),
+    "RBFNetwork":         Pipeline([preprocessor, RBFNetworkClassifier(...)]),
+    "EnsembleSoft":       Pipeline([preprocessor, VotingClassifier(
+                              estimators=base_learners,
+                              voting='soft',
+                              weights=[0.218, 0.210, 0.209, 0.160, 0.203]
+                          )]),
+}
+```
 
-### **Translation Storage (Lines 16-Feature End)**
-- **`TRANSLATIONS`**: A huge dictionary.
-    - **Keys** (e.g., `"app_title"`) are the internal IDs we use in code.
-    - **Values** are dictionaries containing the text for "UZ", "RU", and "EN".
+Har bir model `Pipeline` ichida — preprocessor avval ishlaydi, so'ngra classifier.
 
-### **Helper Functions (Lines 619-664)**
-- **`get_text(key, lang)`**:
-    - Looks up the `key` in the big dictionary.
-    - Returns the text for the requested `lang`.
-    - If the translation is missing, it returns the key itself (so the app doesn't crash).
-- **`t(key, lang)`**:
-    - A short, easy-to-type nickname for `get_text`.
-    - Usage: `t("hello", "UZ")` -> "Salom".
+### `select_best_model()` — 5-Fold Cross-Validation
+- Ma'lumotlar 5 qismga bo'linadi.
+- Har bir qism navbatma-navbat test sifatida ishlatiladi.
+- O'rtacha aniqlik bo'yicha g'olib tanlanadi.
+
+### `train_model()` — Barcha Modellarni O'qitish
+1. Barcha 6 ta model CV orqali baholanadi.
+2. Barcha 6 ta model to'liq o'qitish to'plamida fit qilinadi.
+3. Har biri `models/` papkasiga alohida `.joblib` fayliga saqlanadi.
+4. `registry.json` yangilanadi — barcha modellar metadatasi va faol model kaliti.
+
+---
+
+## 4. Bashorat Moduli (`src/predict.py`)
+
+### `load_model(model_key)`
+- `registry.json` dan faol model kalitini oladi.
+- `config.MODEL_PATHS[key]` bo'yicha `.joblib` faylni yuklaydi.
+
+### `predict_single(input_data, model)`
+- Foydalanuvchi kiritgan ma'lumotlarni DataFrame'ga aylantiradi.
+- `model.predict()` → 1 (Tasdiqlangan) yoki 0 (Rad etilgan).
+- `model.predict_proba()` → ehtimollik (masalan 0.87).
+- **HITL Logikasi**: `VotingClassifier` bo'lsa, 5 ta bazaviy model yakka bashoratlarini solishtiradi. Agar kelishmovchilik bo'lsa → "Edge Case / Manual Review Required".
+
+### `predict_batch(df, model)`
+- CSV fayl ma'lumotlarini to'liq baholaydi.
+- `Prediction`, `Probability`, `Status`, `Confidence Level` ustunlarini qo'shadi.
+- Natija DataFrame qayta yuklab olinadi.
+
+---
+
+## 5. Baholash (`src/evaluate.py`)
+
+- **Metrikalar**: Accuracy, Precision, Recall, F1-Score, ROC-AUC.
+- **Chalkashlik Matritsasi**: Seaborn Heatmap — TP, TN, FP, FN.
+- **ROC Egri Chizig'i**: AUC qiymati bilan.
+- Barcha hisob-kitoblar test to'plamida amalga oshiriladi (ma'lumotlar oqishi yo'q).
+
+---
+
+## 6. Xususiyat Ahamiyati (`src/explain.py`)
+
+- `get_aggregated_feature_importance(model)` — turli model turlariga mos usulda xususiyat ahamiyatini chiqaradi:
+  - **Random Forest / Ensemble**: `feature_importances_`
+  - **Logistic Regression**: `|coef_|`
+  - **SVM**: kernel asosida
+- `plot_feature_importance(df, top_n)` — gorizontal bar chart.
+
+---
+
+## 7. Ma'lumotlar Reestrı (`models/registry.json`)
+
+```json
+{
+  "active": "EnsembleSoft",
+  "models": {
+    "LogisticRegression": { "test_accuracy": 0.8618, ... },
+    "RandomForest":       { "test_accuracy": 0.8130, ... },
+    "SVM":                { "test_accuracy": 0.8537, ... },
+    "MLP":                { "test_accuracy": 0.7967, ... },
+    "RBFNetwork":         { "test_accuracy": 0.8618, ... },
+    "EnsembleSoft":       { "test_accuracy": 0.8618, ... }
+  }
+}
+```
+
+Admin sidebar'dan faol modelni almashtirganda bu fayl yangilanadi.
+
+---
+
+## 8. Xalqarolashtirish (`src/i18n.py`)
+
+- `TRANSLATIONS` — ulkan lug'at. Kalit → `{"UZ": "...", "RU": "...", "EN": "..."}`.
+- `t(key, lang)` — qisqa yordamchi funksiya. Misol: `t("approved", "UZ")` → `"Tasdiqlandi"`.
+- 1200+ qator, barcha UI matnlari uch tilda.
+
+---
+
+## 9. Konfiguratsiya (`src/config.py`)
+
+- Model fayl yo'llari (`MODEL_PATHS`), dataset yo'llari, xususiyat ro'yxatlari.
+- `ENSEMBLE_SOFT_WEIGHTS = [0.218, 0.210, 0.209, 0.160, 0.203]` — CV aniqligiga mutanosib vaznlar.
+- `CV_FOLDS = 5`, `TEST_SIZE = 0.2`, `RANDOM_STATE = 42`.

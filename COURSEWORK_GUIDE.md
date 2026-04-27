@@ -1,8 +1,8 @@
-# 📚 Intelligent Scoring - Coursework Guide
+# 📚 Iste'mol Kreditlari uchun Intellektual Skoring Modeli — Kurs Ishi Qo'llanmasi
 
 ### 1. Loyiha Haqida Umumiy Ma'lumot
 
-**Loyiha nomi:** Intelligent Scoring Ilovasi
+**Loyiha nomi:** Iste'mol Kreditlari uchun Intellektual Skoring Tizimi
 
 **Maqsad:** Bu kurs ishi mashinaviy o'rganish (Machine Learning) yordamida bank kredit arizalarini avtomatik tasdiqlash yoki rad etish bashoratini amalga oshiruvchi to'liq web-ilova yaratishga bag'ishlangan.
 
@@ -53,7 +53,7 @@ Biz Kaggle platformasidan "Loan Prediction Dataset" ni ishlatdik. Bu to'plamda ~
 
 #### 2.3 Model Tanlash
 
-Biz beshta modelni solishtiramiz:
+Biz oltita modelni solishtiramiz:
 
 **1. Logistik Regressiya (Baseline):**
 - Oddiy va tushuntirishga oson
@@ -75,6 +75,11 @@ Biz beshta modelni solishtiramiz:
 **5. RBF Network:**
 - Radial bazis funksiyalari tarmog'i
 - Masofaga asoslangan klassifikatsiyani amalga oshiradi
+
+**6. EnsembleSoft (Asosiy Ansambl):**
+- Yuqoridagi 5 ta modelning vaznli yumshoq ovoz berish (Weighted Soft Voting) ansambli
+- Har bir modelga CV aniqligi asosida og'irlik beriladi: `weights=[0.218, 0.210, 0.209, 0.160, 0.203]`
+- Barcha modellar kelishib tasdiqlasa → Yuqori Ishonch; kelishmasa → Edge Case (HITL)
 
 **Tanlash usuli:** 5-fold Cross-Validation
 - Ma'lumotlar 5 qismga bo'linadi
@@ -159,37 +164,53 @@ Haqiqiy  Rad      TN          FP
 - Model tushuntirishi
 - Cheklovlar va axloqiy masalalar
 
+#### 3.5 Foydalanuvchilarni Boshqarish (User Management)
+
+**Vazifasi** (faqat Admin):
+- Barcha bank xodimlarini ro'yxatda ko'rish
+- Yangi xodim qo'shish (ism, username, email, telefon, pasport, parol)
+- Xodimni o'chirish (Admin o'chirib bo'lmaydi)
+
+#### 3.6 Tizimga Kirish (Login)
+
+**Vazifasi:**
+- PBKDF2-SHA256 bilan shifrlangan parol tekshiruvi
+- Rol asosida kirish huquqlarini ajratish (Admin / Bank Xodimi)
+- 10 daqiqalik harakatsizlik timeout
+- 3 til va 3 mavzu tanlash imkoniyati kirmasdan turib
+
 ---
 
 ### 4. Texnik Arxitektura
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Streamlit UI                             │
-├─────────────────────────────────────────────────────────────┤
-│  O'qitish  │  Yakka Bashorat  │  Ommaviy  │  Ma'lumot       │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Python Backend                           │
-├──────────────┬──────────────┬──────────────┬────────────────┤
-│   train.py   │  predict.py  │ evaluate.py  │   explain.py   │
-└──────────────┴──────────────┴──────────────┴────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│               scikit-learn ML Pipeline                      │
-├─────────────────────────────────────────────────────────────┤
-│  Preprocessor (Imputer + Scaler + Encoder) → Classifier     │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Ma'lumotlar                              │
-├─────────────────────────────────────────────────────────────┤
-│  train.csv (Kaggle)  │  loan_model.joblib  │  metadata.json │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                        Streamlit UI                             │
+├─────────────────────────────────────────────────────────────────┤
+│  Login  │  O'qitish  │  EDA  │  Bashorat  │  Ommaviy  │  Haqida │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       Python Backend                            │
+├────────────┬────────────┬────────────┬────────────┬────────────┤
+│  auth.py   │  train.py  │ predict.py │evaluate.py │ explain.py │
+└────────────┴────────────┴────────────┴────────────┴────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              scikit-learn ML Pipeline (6 Model)                 │
+├─────────────────────────────────────────────────────────────────┤
+│  Preprocessor (Imputer + Scaler + Encoder) → Classifier         │
+│  LR │ RF │ SVM │ MLP │ RBF │ EnsembleSoft (VotingClassifier)   │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       Ma'lumotlar                               │
+├─────────────────────────────────────────────────────────────────┤
+│  train.csv │ registry.json │ *.joblib (6 ta) │ users.db         │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -291,5 +312,5 @@ Chalkashlik matritsasi tahlilida ansambl modeli yolg'on-salbiy bashoratlar (Fals
 
 ---
 
-*📅 Yaratilgan sana: 2026-yil, Yanvar*
+*📅 Yaratilgan sana: 2026-yil, Aprel*
 
